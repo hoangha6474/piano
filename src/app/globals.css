@@ -2847,14 +2847,14 @@ fieldset {
   background: var(--bg);
 }
 .sidebar {
-  left: auto;
-  right: 16px;
+  left: 16px;
+  right: auto;
   top: 16px;
   bottom: 16px;
   width: 258px;
   background: #855f48;
   border: 0;
-  border-radius: 65px 0 0 65px;
+  border-radius: 0 65px 65px 0;
   padding: 36px 22px 0;
   color: #ffe9bf;
   overflow-y: auto;
@@ -2961,8 +2961,8 @@ fieldset {
   color: #ffe9bf;
 }
 .main-column {
-  margin-left: 0;
-  margin-right: 294px;
+  margin-left: 294px;
+  margin-right: 0;
   min-width: 0;
 }
 .main-content {
@@ -3058,7 +3058,7 @@ textarea {
     padding-right: 15px;
   }
   .main-column {
-    margin-right: 238px;
+    margin-left: 238px;
   }
   .main-content {
     padding-left: 10px;
@@ -3084,13 +3084,13 @@ textarea {
     padding: 0;
   }
   .sidebar {
-    left: auto;
-    right: 0;
+    left: 0;
+    right: auto;
     top: 0;
     bottom: 0;
     width: 258px;
-    border-radius: 35px 0 0 35px;
-    transform: translateX(100%);
+    border-radius: 0 35px 35px 0;
+    transform: translateX(-100%);
     padding: 36px 22px 0;
   }
   .sidebar.open {
