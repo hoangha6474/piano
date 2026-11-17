@@ -3,6 +3,21 @@ test("dashboard, course navigation and responsive layout", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   await page.goto("/");
+  await expect(page.locator(".sidebar")).toHaveCSS("position", "relative");
+  const layout = await page.evaluate(() => {
+    const sidebar = document.querySelector<HTMLElement>(".sidebar")!;
+    const main = document.querySelector<HTMLElement>(".main-column")!;
+    const sideRect = sidebar.getBoundingClientRect();
+    const mainRect = main.getBoundingClientRect();
+    return {
+      topDifference: Math.abs(sideRect.top - mainRect.top),
+      bottomDifference: Math.abs(sideRect.bottom - mainRect.bottom),
+      internalScroll: sidebar.scrollHeight > sidebar.clientHeight,
+    };
+  });
+  expect(layout.topDifference).toBeLessThanOrEqual(1);
+  expect(layout.bottomDifference).toBeLessThanOrEqual(1);
+  expect(layout.internalScroll).toBe(false);
   await expect(
     page.getByRole("heading", { name: "Mỗi ngày, một chút âm nhạc." }),
   ).toBeVisible();

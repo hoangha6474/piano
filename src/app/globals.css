@@ -2842,22 +2842,25 @@ fieldset {
 
 /* Warm studio: shared application shell. */
 .app {
-  display: block;
-  padding: 16px;
+  display: grid;
+  grid-template-columns: 258px minmax(0, 1fr);
+  gap: 24px;
+  padding: 0 16px 0 0;
   background: var(--bg);
 }
 .sidebar {
-  left: 16px;
+  position: relative;
+  left: auto;
   right: auto;
-  top: 16px;
-  bottom: 16px;
+  top: auto;
+  bottom: auto;
   width: 258px;
   background: #855f48;
   border: 0;
-  border-radius: 0 65px 65px 0;
-  padding: 36px 22px 0;
+  border-radius: 0 28px 28px 0;
+  padding: 28px 22px 0;
   color: #ffe9bf;
-  overflow-y: auto;
+  overflow: visible;
   scrollbar-width: thin;
   scrollbar-color: #b59477 transparent;
 }
@@ -2961,8 +2964,7 @@ fieldset {
   color: #ffe9bf;
 }
 .main-column {
-  margin-left: 294px;
-  margin-right: 0;
+  margin: 0;
   min-width: 0;
 }
 .main-content {
@@ -3052,13 +3054,17 @@ textarea {
   }
 }
 @media (max-width: 1100px) and (min-width: 701px) {
+  .app {
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 18px;
+  }
   .sidebar {
     width: 220px;
     padding-left: 15px;
     padding-right: 15px;
   }
   .main-column {
-    margin-left: 238px;
+    margin: 0;
   }
   .main-content {
     padding-left: 10px;
@@ -3081,13 +3087,17 @@ textarea {
 }
 @media (max-width: 700px) {
   .app {
+    display: block;
     padding: 0;
   }
   .sidebar {
+    position: fixed;
     left: 0;
     right: auto;
     top: 0;
     bottom: 0;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
     width: 258px;
     border-radius: 0 35px 35px 0;
     transform: translateX(-100%);
