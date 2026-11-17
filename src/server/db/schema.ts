@@ -39,7 +39,7 @@ export const session = pgTable(
     token: text("token").notNull().unique(),
     expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
     createdAt: created(),
-    updatedAt: created(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
     ipAddress: text("ip_address"),
     userAgent: text("user_agent"),
   },
@@ -64,7 +64,7 @@ export const account = pgTable(
     scope: text("scope"),
     password: text("password"),
     createdAt: created(),
-    updatedAt: created(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
   },
   (t) => [
     index("account_owner_idx").on(t.userId),
@@ -79,7 +79,7 @@ export const verification = pgTable(
     value: text("value").notNull(),
     expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
     createdAt: created(),
-    updatedAt: created(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
   },
   (t) => [index("verification_identifier_idx").on(t.identifier)],
 );
@@ -455,7 +455,7 @@ export const workspaces = pgTable("learning_workspaces", {
   userId: owner().primaryKey(),
   revision: integer("revision").default(1).notNull(),
   data: jsonb("data").notNull(),
-  updatedAt: created(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 });
 export const aiUsage = pgTable(
   "ai_usage",
