@@ -19,6 +19,7 @@ import {
   ChevronRight,
   ArrowUpRight,
   Leaf,
+  Plus,
 } from "lucide-react";
 import { Dashboard } from "@/features/dashboard";
 import { Curriculum, Lesson } from "@/features/curriculum";
@@ -106,7 +107,7 @@ export function Workspace({ section }: { section: string }) {
         content = <Dashboard />;
     }
   return (
-    <div className="app">
+    <div className={`app ${section === "home" ? "home-workspace" : ""}`}>
       <a href="#main" className="skip-link">
         Chuyển đến nội dung
       </a>
@@ -133,6 +134,14 @@ export function Workspace({ section }: { section: string }) {
         >
           <X size={20} />
         </button>
+        <div className="sidebar-actions">
+          <Link href="/practice" aria-label="Bắt đầu luyện piano">
+            <Plus size={25} /> LUYỆN PIANO
+          </Link>
+          <Link href="/my-scores" aria-label="Mở bản nhạc của tôi">
+            <Plus size={25} /> BẢN NHẠC CỦA TÔI
+          </Link>
+        </div>
         <div className="sidebar-label">KHÔNG GIAN CỦA BẠN</div>
         <nav>
           {navigation.map((n, i) => (

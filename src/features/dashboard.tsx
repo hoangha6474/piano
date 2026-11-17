@@ -1,292 +1,239 @@
 "use client";
 import Link from "next/link";
 import {
-  ArrowRight,
   ArrowUpRight,
-  Clock3,
-  BookOpen,
-  Target,
+  Plus,
   Music2,
+  BookOpen,
   Headphones,
-  CalendarDays,
-  Play,
+  Search,
   Check,
+  Clock3,
+  ChevronRight,
 } from "lucide-react";
-import { Card, PageHeading, SectionTitle } from "@/components/ui";
 import { useLearning } from "./store";
-import { lessons, library } from "@/music/library";
+import { lessons } from "@/music/library";
+import s from "./dashboard.module.css";
 export function Dashboard() {
-  const state = useLearning(),
-    minutes = Math.floor(state.results.reduce((s, r) => s + r.seconds, 0) / 60),
-    last = lessons.find((l) => l.id === state.lastLesson) || lessons[1];
-  const accuracy = state.results.length
-    ? Math.round(
-        state.results.reduce((s, r) => s + r.evaluation.accuracy, 0) /
-          state.results.length,
-      )
-    : null;
-  const next =
-    lessons.find((l) => !state.completed.includes(l.id)) || lessons[0];
-  const today = new Date().toLocaleDateString("sv-SE"),
-    plans = state.plans.filter(
+  const state = useLearning();
+  const now = new Date();
+  const dateKey = (date: Date) => date.toLocaleDateString("sv-SE");
+  const today = dateKey(now);
+  const monday = new Date(now);
+  monday.setDate(now.getDate() - ((now.getDay() + 6) % 7));
+  const days = Array.from({ length: 7 }, (_, i) => {
+    const date = new Date(monday);
+    date.setDate(monday.getDate() + i);
+    return date;
+  });
+  const plans = state.plans
+    .filter(
       (p) =>
         p.date === today ||
-        (p.repeat === "daily" && p.date <= today) ||
-        (p.repeat === "weekly" &&
-          p.date <= today &&
-          new Date(p.date + "T12:00:00").getDay() === new Date().getDay()),
-    );
+        (p.date <= today &&
+          (p.repeat === "daily" ||
+            (p.repeat === "weekly" &&
+              new Date(p.date + "T12:00:00").getDay() === now.getDay()))),
+    )
+    .sort((a, b) => a.time.localeCompare(b.time));
+  const last = lessons.find((l) => l.id === state.lastLesson) || lessons[0];
+  const minutes = Math.floor(
+    state.results.reduce((sum, r) => sum + r.seconds, 0) / 60,
+  );
   return (
-    <>
-      <PageHeading
-        eyebrow="MỖI NGÀY, MỘT CHÚT TIẾN BỘ"
-        title="Chào bạn, cùng chơi Piano nhé."
-        description="Một khoảng lặng cho bạn. Một bước tiến cho âm nhạc."
-        action={
-          <span className="date-label">
-            <CalendarDays size={16} />
-            {state.ready
-              ? new Intl.DateTimeFormat("vi-VN", {
-                  day: "numeric",
-                  month: "long",
-                }).format(new Date())
-              : "Hôm nay"}
-          </span>
-        }
-      />
-      <section className="hero">
-        <div className="hero-copy">
-          <span className="hero-kicker">
-            <span />
-            HÀNH TRÌNH ÂM NHẠC CỦA BẠN
-          </span>
-          <h2>
-            Âm nhạc bắt đầu
+    <div className={s.dashboard}>
+      <header className={s.header}>
+        <div>
+          <span className={s.eyebrow}>KHÔNG GIAN ÂM NHẠC CỦA BẠN</span>
+          <h1>
+            Mỗi ngày, một
             <br />
-            từ đôi tay bạn.
-          </h2>
-          <p>
-            Không cần vội vàng. Chỉ cần ngồi xuống,
-            <br className="desktop-break" /> thả lỏng và chơi những nốt đầu
-            tiên.
-          </p>
-          <Link className="button cream" href={`/lessons?id=${last.id}`}>
-            Tiếp tục học
-            <ArrowRight size={17} />
-          </Link>
-          <span className="hero-caption">
-            {last.title} · {last.minutes} phút
-          </span>
+            chút âm nhạc<span>.</span>
+          </h1>
         </div>
-        <div className="piano-art" aria-hidden="true">
-          <div className="art-orbit orbit-one" />
-          <div className="art-orbit orbit-two" />
-          <span className="art-note note-one">♪</span>
-          <span className="art-note note-two">♩</span>
-          <div className="piano-lid" />
-          <div className="piano-body">
-            <div className="piano-brand">PIANO LEARNING</div>
-            <div className="piano-keys" />
-          </div>
-          <div className="piano-leg leg-one" />
-          <div className="piano-leg leg-two" />
-          <div className="piano-shadow" />
-        </div>
-        <div className="hero-number">01 / YOUR OWN TEMPO</div>
-      </section>
-      <div className="stats-grid">
-        {[
-          {
-            icon: Clock3,
-            value: minutes,
-            suffix: "phút",
-            label: "Thời gian luyện tập",
-          },
-          {
-            icon: BookOpen,
-            value: state.completed.length,
-            suffix: `/ ${lessons.length}`,
-            label: "Bài học hoàn thành",
-          },
-          {
-            icon: Target,
-            value: accuracy === null ? "—" : accuracy,
-            suffix: accuracy === null ? "" : "%",
-            label: "Độ chính xác nốt",
-          },
-          {
-            icon: Music2,
-            value: state.results.length,
-            suffix: "lượt",
-            label: "Lượt luyện đã lưu",
-          },
-        ].map((s) => (
-          <Card className="stat-card" key={s.label}>
-            <div className="stat-top">
-              <span>{s.label}</span>
-              <s.icon size={17} />
-            </div>
-            <div className="stat-value">
-              {s.value}
-              <small>{s.suffix}</small>
-            </div>
-          </Card>
-        ))}
+        <Link href="/library" className={s.search}>
+          <Search size={20} /> Khám phá bản nhạc <ArrowUpRight size={18} />
+        </Link>
+      </header>
+      <div className={s.intro}>
+        <span>
+          {now.toLocaleDateString("vi-VN", {
+            weekday: "long",
+            day: "numeric",
+            month: "long",
+          })}
+        </span>
+        <span className={s.studioLabel}>HỌC THEO NHỊP CỦA BẠN</span>
       </div>
-      <div className="dashboard-columns">
-        <div>
-          <SectionTitle
-            title="Lộ trình của bạn"
-            extra={
-              <Link href="/curriculum" className="text-button">
-                Xem giáo trình
-                <ArrowUpRight size={15} />
-              </Link>
-            }
-          />
-          <Card className="learning-card">
-            <div className="learning-card-top">
-              <span className="tag">{next.level}</span>
-              <span className="muted small-text">{next.chapter}</span>
-            </div>
-            <h3>{next.title}</h3>
-            <p>{next.description}</p>
-            <div className="lesson-progress">
-              <div className="progress-track">
-                <i
-                  style={{
-                    width: `${(state.completed.length / lessons.length) * 100}%`,
-                  }}
-                />
-              </div>
-              <small>
-                {state.completed.length} / {lessons.length} bài đã hoàn thành
-              </small>
-            </div>
-            <div className="learning-card-bottom">
-              <span>
-                <Clock3 size={15} />
-                {next.minutes} phút · Học theo tốc độ của bạn
-              </span>
-              <Link
-                className="round-arrow"
-                href={`/lessons?id=${next.id}`}
-                aria-label={`Học ${next.title}`}
-              >
-                <ArrowRight size={19} />
-              </Link>
-            </div>
-          </Card>
-          <SectionTitle title="Một chút luyện tập hôm nay" />
-          <div className="quick-grid">
-            <Link className="quick-card ear-card" href="/ear-training">
-              <span className="quick-icon">
-                <Headphones size={23} />
-              </span>
-              <span>
-                <strong>Lắng nghe & cảm nhận</strong>
-                <small>Rèn đôi tai âm nhạc của bạn</small>
-              </span>
-              <ArrowUpRight size={19} />
-            </Link>
-            <Link className="quick-card scale-card" href="/technique">
-              <span className="quick-icon">
-                <Music2 size={23} />
-              </span>
-              <span>
-                <strong>Luyện gam & hợp âm</strong>
-                <small>Vững kỹ thuật, tự tin hơn</small>
-              </span>
-              <ArrowUpRight size={19} />
-            </Link>
+      <div className={s.grid}>
+        <section className={s.today}>
+          <div className={s.title}>
+            <h2>Hôm nay của bạn</h2>
+            <Clock3 size={20} />
           </div>
-        </div>
-        <div>
-          <SectionTitle
-            title="Kế hoạch hôm nay"
-            extra={
-              <Link
-                href="/schedule"
-                className="icon-button"
-                aria-label="Mở lịch luyện"
-              >
-                <ArrowUpRight size={17} />
-              </Link>
-            }
-          />
-          <Card className="today-card">
-            <div className="today-date">
-              <CalendarDays size={19} />
-              <span>Một cuộc hẹn với âm nhạc</span>
-            </div>
-            {plans.length ? (
-              plans.map((p) => (
-                <div className="plan-mini" key={p.id}>
-                  <span className="plan-time">{p.time}</span>
-                  <div>
-                    <strong>{p.title}</strong>
-                    <small>{p.minutes} phút</small>
-                  </div>
-                  {p.doneDates.includes(today) && <Check size={17} />}
-                </div>
-              ))
-            ) : (
-              <>
-                <h3>Dành thời gian cho điều bạn thích.</h3>
-                <p>15 phút tập trung cũng có thể tạo nên sự khác biệt.</p>
-                <Link href="/schedule" className="button secondary full">
-                  Lên lịch luyện tập
-                  <ArrowRight size={16} />
+          <p>Một nhịp nhỏ. Một bước tiến.</p>
+          {plans.map((plan) => (
+            <div className={s.plan} key={plan.id}>
+              <span className={s.time}>
+                {plan.time} · {plan.minutes} PHÚT
+              </span>
+              <h3>{plan.title}</h3>
+              <div>
+                <Link
+                  href={
+                    plan.scoreId
+                      ? `/practice?score=${encodeURIComponent(plan.scoreId)}`
+                      : "/practice"
+                  }
+                >
+                  Luyện tập <ArrowUpRight size={16} />
                 </Link>
-              </>
-            )}
-            <div className="daily-note">
-              <span>GỢI Ý NHỎ</span>
-              <p>
-                “Chơi chậm để nghe rõ.
-                <br />
-                Lặp lại để cảm thấy tự nhiên.”
-              </p>
+                <button
+                  type="button"
+                  onClick={() => state.togglePlan(plan.id, today)}
+                  aria-pressed={plan.doneDates.includes(today)}
+                  aria-label={`Đánh dấu hoàn thành: ${plan.title}`}
+                >
+                  {plan.doneDates.includes(today) ? (
+                    <Check size={16} />
+                  ) : (
+                    "Hoàn thành"
+                  )}
+                </button>
+              </div>
             </div>
-          </Card>
+          ))}
+          <div className={s.task}>
+            <span className={s.time}>01 / KHỞI ĐỘNG</span>
+            <h3>Đánh thức đôi tay</h3>
+            <p>Gam Đô trưởng · 5 phút</p>
+            <Link href="/technique">
+              Bắt đầu <ArrowUpRight size={18} />
+            </Link>
+          </div>
+          <div className={s.done}>
+            <Check size={20} />
+            <div>
+              <strong>Sẵn sàng cho buổi tập</strong>
+              <p>Thả lỏng vai, ngồi thật thoải mái.</p>
+            </div>
+          </div>
+          <div className={s.note}>
+            <Music2 size={25} />
+            <p>
+              Không cần hoàn hảo.
+              <br />
+              <strong>Chỉ cần bắt đầu.</strong>
+            </p>
+          </div>
+          <Link className={s.bottomlink} href="/schedule">
+            Xem lịch luyện tập <ChevronRight size={17} />
+          </Link>
+        </section>
+        <div className={s.center}>
+          <section className={s.hero}>
+            <div className={s.herohead}>
+              <span>NHỊP ĐIỆU TUẦN NÀY</span>
+              <Link href="/schedule">
+                {days[0].getDate()}/{days[0].getMonth() + 1} —{" "}
+                {days[6].getDate()}/{days[6].getMonth() + 1}{" "}
+                <ChevronRight size={14} />
+              </Link>
+            </div>
+            <h2>
+              Chơi theo nhịp
+              <br />
+              của riêng bạn.
+            </h2>
+            <p>Dành 15 phút cho điều bạn yêu thích.</p>
+            <div className={s.week}>
+              {days.map((date, i) => (
+                <Link
+                  href={`/schedule?date=${dateKey(date)}`}
+                  key={dateKey(date)}
+                  className={dateKey(date) === today ? s.selected : ""}
+                  aria-label={`Lịch ngày ${date.toLocaleDateString("vi-VN")}`}
+                >
+                  <span>{["T2", "T3", "T4", "T5", "T6", "T7", "CN"][i]}</span>
+                  <strong>{date.getDate()}</strong>
+                  <i
+                    className={
+                      state.results.some(
+                        (r) => dateKey(new Date(r.at)) === dateKey(date),
+                      )
+                        ? s.finished
+                        : ""
+                    }
+                  />
+                </Link>
+              ))}
+            </div>
+            <div className={s.herobottom}>
+              <span>
+                <span className={s.dot} /> Hành trình bắt đầu từ hôm nay
+              </span>
+              <Link href="/practice" aria-label="Bắt đầu luyện piano">
+                <Plus size={25} />
+              </Link>
+            </div>
+          </section>
+          <section className={s.continue}>
+            <div className={s.title}>
+              <h2>Tiếp tục hành trình</h2>
+              <span>
+                {state.completed.length} / {lessons.length}
+              </span>
+            </div>
+            <div className={s.lesson}>
+              <div className={s.keys}>
+                {Array.from({ length: 12 }, (_, i) => (
+                  <i key={i} />
+                ))}
+              </div>
+              <div>
+                <span className={s.eyebrow}>{last.chapter}</span>
+                <h3>{last.title}</h3>
+                <p>{last.minutes} phút · Học theo tốc độ của bạn.</p>
+                <Link href={`/lessons?id=${last.id}`}>
+                  Vào bài học <ArrowUpRight size={17} />
+                </Link>
+              </div>
+            </div>
+          </section>
         </div>
       </div>
-      <SectionTitle
-        title="Tìm một giai điệu để bắt đầu"
-        extra={
-          <Link href="/library" className="text-button">
-            Khám phá thư viện
-            <ArrowUpRight size={15} />
-          </Link>
-        }
-      />
-      <div className="song-grid">
-        {library.slice(0, 3).map((s, i) => (
-          <Link
-            href={`/practice?score=${s.id}`}
-            className="song-card"
-            key={s.id}
-          >
-            <div className={`song-art art-${i}`}>
-              <span className="song-art-symbol">{["𝄞", "♩", "♫"][i]}</span>
-              <span className="art-staff" />
-              <span className="song-play" aria-label={`Luyện ${s.title}`}>
-                <Play size={17} />
-              </span>
-            </div>
-            <div className="song-info">
-              <span className="muted small-text">
-                BÀI TẬP GỐC · {s.bpm} BPM
-              </span>
-              <h3>{s.title}</h3>
-              <span className="song-level">
-                {s.level}
-                <ArrowUpRight size={16} />
-              </span>
-            </div>
-          </Link>
-        ))}
+      <div className={s.lower}>
+        <Link href="/ear-training">
+          <Headphones size={24} />
+          <div>
+            <strong>Lắng nghe & cảm nhận</strong>
+            <p>Rèn đôi tai âm nhạc của bạn</p>
+          </div>
+          <ArrowUpRight size={19} />
+        </Link>
+        <Link href="/library">
+          <BookOpen size={24} />
+          <div>
+            <strong>Tìm giai điệu yêu thích</strong>
+            <p>Khám phá thư viện bản nhạc</p>
+          </div>
+          <ArrowUpRight size={19} />
+        </Link>
       </div>
-    </>
+      <div className={s.metrics}>
+        <Link href="/progress">
+          <strong>{minutes}</strong>
+          <span>phút luyện tập</span>
+        </Link>
+        <Link href="/curriculum">
+          <strong>{state.completed.length}</strong>
+          <span>bài học hoàn thành</span>
+        </Link>
+        <Link href="/progress">
+          <strong>{state.results.length}</strong>
+          <span>lượt luyện đã lưu</span>
+        </Link>
+      </div>
+    </div>
   );
 }

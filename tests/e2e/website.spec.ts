@@ -4,7 +4,7 @@ test("dashboard, course navigation and responsive layout", async ({ page }) => {
   page.on("pageerror", (e) => errors.push(e.message));
   await page.goto("/");
   await expect(
-    page.getByRole("heading", { name: "Chào bạn, cùng chơi Piano nhé." }),
+    page.getByRole("heading", { name: "Mỗi ngày, một chút âm nhạc." }),
   ).toBeVisible();
   await page.screenshot({
     path: "test-results/dashboard-desktop.png",
@@ -21,7 +21,7 @@ test("dashboard, course navigation and responsive layout", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
   await expect(
-    page.getByRole("heading", { name: "Chào bạn, cùng chơi Piano nhé." }),
+    page.getByRole("heading", { name: "Mỗi ngày, một chút âm nhạc." }),
   ).toBeVisible();
   expect(
     await page.evaluate(
@@ -36,6 +36,8 @@ test("dashboard, course navigation and responsive layout", async ({ page }) => {
   await expect(
     page.getByRole("link", { name: "Luyện Piano", exact: true }),
   ).toBeVisible();
+  await page.getByRole("button", { name: "Đóng điều hướng" }).click();
+  expect((await page.request.get("/preview")).status()).toBe(404);
   expect(errors).toEqual([]);
 });
 test("score renders, tempo and annotation persist after reload", async ({
@@ -43,7 +45,7 @@ test("score renders, tempo and annotation persist after reload", async ({
 }, testInfo) => {
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
-  await page.setViewportSize({width:1440,height:1600});
+  await page.setViewportSize({ width: 1440, height: 1600 });
   await page.goto("/practice");
   await expect(page.locator(".osmd svg").first()).toBeVisible({
     timeout: 40000,
@@ -58,9 +60,9 @@ test("score renders, tempo and annotation persist after reload", async ({
     contentType: "image/svg+xml",
   });
   await expect(page.locator(".osmd [data-note-id]")).toHaveCount(16);
-  await expect(page.locator('.score-loading')).toHaveCount(0);
-  await expect(page.locator('.note-name-label').first()).toBeHidden();
-  await expect(page.locator('.note-finger-label').first()).toBeHidden();
+  await expect(page.locator(".score-loading")).toHaveCount(0);
+  await expect(page.locator(".note-name-label").first()).toBeHidden();
+  await expect(page.locator(".note-finger-label").first()).toBeHidden();
   await page.screenshot({
     path: "test-results/practice-desktop.png",
     fullPage: false,

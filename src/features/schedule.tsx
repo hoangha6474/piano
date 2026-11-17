@@ -1,4 +1,5 @@
 "use client";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
   CalendarDays,
@@ -25,8 +26,16 @@ export function occurs(plan: Plan, date: string) {
   );
 }
 export function Schedule() {
+  const query = useSearchParams();
+  const requestedDate = query.get("date");
+  const initialDate =
+    requestedDate &&
+    /^\d{4}-\d{2}-\d{2}$/.test(requestedDate) &&
+    !Number.isNaN(Date.parse(requestedDate + "T12:00:00"))
+      ? requestedDate
+      : localDate();
   const state = useLearning(),
-    [date, setDate] = useState(localDate()),
+    [date, setDate] = useState(initialDate),
     [editing, setEditing] = useState<Plan | null>(null),
     [form, setForm] = useState(false),
     [message, setMessage] = useState(""),
