@@ -7,7 +7,7 @@
 .eyebrow {
   font-size: 10px;
   letter-spacing: 1.9px;
-  color: #8b7667;
+  color: #c4b39f;
   font-weight: 600;
 }
 .header h1 {
@@ -21,16 +21,16 @@
   color: var(--brown);
 }
 .search {
-  border: 1.5px solid #292321;
+  border: 1.5px solid #8e7d69;
   border-radius: 40px;
   padding: 12px 16px;
   display: flex;
   align-items: center;
   gap: 12px;
   font-size: 12px;
-  color: #746a63;
+  color: #c4b39f;
   min-width: 280px;
-  background: #f5f1f0;
+  background: #26231e;
 }
 .search svg:last-child {
   margin-left: auto;
@@ -40,13 +40,13 @@
   justify-content: space-between;
   align-items: center;
   margin: 7px 0 26px;
-  color: #80736b;
+  color: #c4b39f;
   font-size: 12px;
 }
 .studioLabel {
   font-size: 9px;
   letter-spacing: 1.3px;
-  color: #a48c7b;
+  color: #c4b39f;
 }
 .grid {
   display: grid;
@@ -54,7 +54,7 @@
   gap: 24px;
 }
 .today {
-  background: #f1eeee;
+  background: #28251f;
   border-radius: 21px;
   padding: 24px 20px;
   display: flex;
@@ -73,24 +73,24 @@
 }
 .title > span {
   font-size: 11px;
-  color: #8d796a;
+  color: #c4b39f;
 }
 .today > p {
   font-size: 11px;
-  color: #92877f;
+  color: #c4b39f;
   margin-top: 5px;
 }
 .task {
-  background: #ffe6b9;
+  background: #ffd17c;
   border-radius: 13px;
   padding: 20px 16px;
   margin-top: 26px;
-  box-shadow: 0 3px 0 #dbc8b188;
+  box-shadow: 0 3px 0 #00000020;
 }
 .time {
   font-size: 9px;
   letter-spacing: 1.4px;
-  color: #896b4d;
+  color: #80603b;
 }
 .task h3 {
   font-size: 17px;
@@ -98,7 +98,7 @@
 }
 .task p {
   font-size: 11px;
-  color: #8a7058;
+  color: #80603b;
 }
 .task a {
   display: flex;
@@ -111,7 +111,7 @@
 .done {
   display: flex;
   gap: 10px;
-  background: #d4e9cb;
+  background: #213a25;
   padding: 16px 12px;
   border-radius: 10px;
   margin-top: 16px;
@@ -130,7 +130,7 @@
 .done p {
   font-size: 10px;
   line-height: 1.6;
-  color: #66805e;
+  color: #a1c393;
   margin-top: 5px;
 }
 .note {
@@ -138,16 +138,16 @@
   align-items: center;
   gap: 14px;
   margin: 32px 5px;
-  color: #9b8370;
+  color: #c4b39f;
 }
 .note p {
   font-size: 12px;
   line-height: 1.8;
-  color: #9b8370;
+  color: #c4b39f;
 }
 .note strong {
   font-weight: 500;
-  color: #78614f;
+  color: #f0dfc4;
 }
 .bottomlink {
   display: flex;
@@ -156,8 +156,8 @@
   font-size: 11px;
   margin-top: auto;
   padding-top: 20px;
-  border-top: 1px solid #dfd8d3;
-  color: #817264;
+  border-top: 1px solid #40372d;
+  color: #c4b39f;
 }
 .center {
   display: flex;
@@ -165,10 +165,10 @@
   gap: 23px;
 }
 .hero {
-  background: #fff4de;
+  background: #28251f;
   border-radius: 19px;
   padding: 25px 28px 18px;
-  box-shadow: 0 3px 1px #cfc5b7;
+  box-shadow: 0 3px 1px #00000000;
   position: relative;
   overflow: hidden;
 }
@@ -179,14 +179,14 @@
   align-items: center;
   font-size: 8px;
   letter-spacing: 1.3px;
-  color: #8a745d;
+  color: #c4b39f;
 }
 .herohead a {
   display: flex;
   align-items: center;
   gap: 4px;
-  background: #a58b75;
-  color: #fff8ed;
+  background: #49382b;
+  color: #f2dfc4;
   padding: 6px 10px;
   border-radius: 30px;
   font-size: 8px;
@@ -201,13 +201,13 @@
 }
 .hero > p {
   font-size: 11px;
-  color: #97826b;
+  color: #c4b39f;
   margin: 10px 0 22px;
 }
 .week {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  border-top: 1px solid #b4a087;
+  border-top: 1px solid #4b3e2f;
   padding-top: 15px;
   gap: 7px;
 }
@@ -221,7 +221,7 @@
 }
 .week span {
   font-size: 9px;
-  color: #8c7d6b;
+  color: #c4b39f;
 }
 .week strong {
   font-weight: 500;
@@ -231,7 +231,7 @@
   height: 4px;
   width: 4px;
   border-radius: 50%;
-  background: #ccbba0;
+  background: #ac9477;
 }
 .week .selected {
   background: var(--brown);
@@ -254,7 +254,7 @@
 }
 .herobottom > span {
   font-size: 9px;
-  color: #a08a6f;
+  color: #c4b39f;
 }
 .dot {
   display: inline-block;
@@ -265,7 +265,7 @@
   margin-right: 5px;
 }
 .herobottom > a {
-  border: 1.5px solid #373029;
+  border: 1.5px solid #e0cfb5;
   border-radius: 50%;
   width: 29px;
   height: 29px;
@@ -273,10 +273,10 @@
   place-items: center;
 }
 .continue {
-  background: #f1eeee;
+  background: #28251f;
   border-radius: 16px;
   padding: 21px 25px;
-  box-shadow: 0 3px 2px #d6ceca;
+  box-shadow: 0 3px 2px #00000000;
 }
 .continue .title h2 {
   font-size: 16px;
@@ -294,7 +294,7 @@
 }
 .lesson p {
   font-size: 10px;
-  color: #948579;
+  color: #c4b39f;
 }
 .lesson .eyebrow {
   font-size: 8px;
@@ -306,7 +306,7 @@
   gap: 19px;
   font-size: 11px;
   margin-top: 17px;
-  color: #855f48;
+  color: #bc9473;
   font-weight: 600;
 }
 .keys {
@@ -348,11 +348,11 @@
   align-items: center;
   gap: 16px;
   padding: 21px;
-  border: 1px solid #e4d9d1;
+  border: 1px solid #40372d;
   border-radius: 15px;
 }
 .lower > a > svg {
-  color: #9b7d64;
+  color: #c4b39f;
   flex-shrink: 0;
 }
 .lower > a > svg:last-child {
@@ -364,7 +364,7 @@
 }
 .lower p {
   font-size: 10px;
-  color: #9a8c80;
+  color: #c4b39f;
   margin-top: 4px;
 }
 @media (min-width: 1500px) {
@@ -464,13 +464,13 @@
 }
 
 .dashboard {
-  --brown: #855f48;
+  --brown: #bc9473;
   --cream: #ffe8b8;
-  --pink: #fff8f8;
-  color: #25211f;
+  --pink: #1b1a17;
+  color: #f5eddf;
 }
 .plan {
-  background: #fff4de;
+  background: #28251f;
   padding: 15px;
   border-radius: 12px;
   margin-top: 16px;
@@ -492,15 +492,15 @@
   font-size: 11px;
 }
 .plan button {
-  border: 1px solid #b5a08b;
-  background: #fff8ed;
+  border: 1px solid #695540;
+  background: #3b3027;
   border-radius: 20px;
   padding: 5px 9px;
   font-size: 10px;
-  color: #75563f;
+  color: #f0dfc4;
 }
 .plan button[aria-pressed="true"] {
-  background: #d4e9cb;
+  background: #213a25;
 }
 .metrics {
   display: grid;
@@ -510,7 +510,7 @@
 }
 .metrics a {
   padding: 16px;
-  background: #f1eeee;
+  background: #28251f;
   border-radius: 13px;
   display: flex;
   gap: 10px;
@@ -522,7 +522,7 @@
 }
 .metrics span {
   font-size: 10px;
-  color: #8b7667;
+  color: #c4b39f;
 }
 @media (max-width: 500px) {
   .metrics {
@@ -537,3 +537,10 @@
     font-size: 9px;
   }
 }
+
+.task { color: #211b13; }
+.week .selected { background: #855f48; }
+.today, .hero, .continue, .metrics a { border: 1px solid var(--line); }
+.lower > a { background: var(--paper); }
+.header h1 span { color: #c29a77; }
+.hero { background: linear-gradient(120deg, #2c2720, #27241f); }

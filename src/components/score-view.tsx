@@ -159,7 +159,7 @@ export function ScoreView(p: Props) {
                         "font-family",
                         "Segoe UI, Arial, sans-serif",
                       );
-                      label.setAttribute("fill", "#839167");
+                      label.setAttribute("fill", "#59613f");
                       label.classList.add(className);
                       element.parentElement?.append(label);
                       return label;
@@ -204,7 +204,7 @@ export function ScoreView(p: Props) {
   }, [p.score, p.zoom, p.compact, width]);
   function baseColor(d: Drawn) {
     const config = latest.current;
-    if (config.errors.has(d.note.id)) return "#b46b52";
+    if (config.errors.has(d.note.id)) return "#a34732";
     const mark = config.annotations.find(
       (a) =>
         d.note.beat >= a.beat &&
@@ -212,11 +212,11 @@ export function ScoreView(p: Props) {
         (!a.hand || a.hand === "both" || a.hand === d.note.hand),
     );
     if (mark) return mark.color;
-    if (d.note.beat >= config.a && d.note.beat < config.b) return "#8c9d58";
+    if (d.note.beat >= config.a && d.note.beat < config.b) return "#667335";
     return config.colors
       ? d.note.hand === "right"
         ? "#6b6a45"
-        : "#768baa"
+        : "#446384"
       : "#30352c";
   }
   useEffect(() => {
@@ -251,7 +251,7 @@ export function ScoreView(p: Props) {
     if (active.current === at) return;
     for (const d of drawn.current) {
       if (d.note.beat === active.current) d.graph.setColor(baseColor(d), {});
-      if (d.note.beat === at) d.graph.setColor("#4d885d", {});
+      if (d.note.beat === at) d.graph.setColor("#2f7049", {});
     }
     active.current = at;
     if (p.autoScroll)
