@@ -16,14 +16,19 @@ OpenNext invokes it internally.
 
 For Cloudflare Workers Builds, use these settings:
 
-- Build command: `npm run build`
-- Deploy command: `npm run deploy` (or the existing `npx wrangler deploy`)
+- Build command: `npm run build:cloudflare`
+- Deploy command: `npx opennextjs-cloudflare deploy`
 
-Wrangler's custom `build.command` runs `npm run build:cloudflare` automatically
-before deployment, including when deploying directly with `npx wrangler deploy`.
-This deliberately rebuilds the Next.js output during deployment to ensure the
-Worker entry point always exists. Do not use `npm run deploy` as the build
-command. To check the bundle locally without publishing, run
+The build command must generate both `.open-next/worker.js` and
+`.open-next/.build/open-next.config.edge.mjs` before the deploy command starts.
+Using `npm run build` alone only generates Next.js output. Wrangler may delegate
+to OpenNext before running a custom Wrangler build, so there is deliberately no
+custom `build.command` in `wrangler.jsonc`.
+
+For a single command that builds and then deploys, use `npm run deploy`.
+This script explicitly runs OpenNext build before OpenNext deploy. It can also
+be used as the Cloudflare deploy command, though it will rebuild if the build
+step already ran OpenNext. To check this sequence without publishing, run
 `npm run deploy -- --dry-run`.
 
 For a local Workers preview, run `npm run preview:cloudflare`.
