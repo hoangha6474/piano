@@ -8,5 +8,8 @@
     "directory": ".open-next/assets",
     "binding": "ASSETS"
   },
-  "keep_vars": true
+  "keep_vars": true,
+  "vars": {
+    "BETTER_AUTH_URL": "https://piano.nxh23012007.workers.dev"
+  }
 }
