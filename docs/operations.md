@@ -2,6 +2,9 @@
 
 ## Triển khai Vercel
 
+Đặt Build Command thành `npm run build:next` trên Vercel. Lệnh mặc định
+`npm run build` hiện tạo Worker cho Cloudflare; xem [cấu hình Cloudflare](cloudflare.md).
+
 1. Import repository do chủ dự án chọn. Framework Next.js; Node.js tối thiểu 22.13.
 2. Tạo môi trường preview và production riêng; dùng Neon database/branch và R2 bucket phù hợp từng môi trường.
 3. Đặt secret qua hệ thống biến môi trường của hosting; `BETTER_AUTH_URL` phải khớp domain HTTPS thực tế.

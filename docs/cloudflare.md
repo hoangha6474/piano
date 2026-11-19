@@ -9,21 +9,27 @@ settings, with the application's actual HTTPS origin. The variable name ends in
 The Worker name defaults to `piano`. Before deploying, match `name` to the existing
 Cloudflare Worker name so the deployment updates the intended application.
 
-Install dependencies with `npm ci`. `npm run build:cloudflare` uses OpenNext to
-generate `.open-next/worker.js` and `.open-next/assets`; `next build` alone does
-not produce them. Keep `npm run build` as the regular Next.js build, because
-OpenNext invokes it internally.
+Install dependencies with `npm ci`. `npm run build` uses OpenNext to generate
+`.open-next/worker.js`, `.open-next/.build/open-next.config.edge.mjs`, and static
+assets. `npm run build:cloudflare` is an equivalent build entry point.
+
+`open-next.config.ts` explicitly sets `buildCommand: "npm run build:next"`.
+This runs `next build` inside OpenNext without calling the Worker build again.
+Keep this override when modifying the scripts to avoid recursive builds.
+Use `npm run build:next` for a plain Node.js/Vercel Next.js build.
 
 For Cloudflare Workers Builds, use these settings:
 
-- Build command: `npm run build:cloudflare`
-- Deploy command: `npx opennextjs-cloudflare deploy`
+- Build command: `npm run build`
+- Deploy command: `npx wrangler deploy`
 
 The build command must generate both `.open-next/worker.js` and
 `.open-next/.build/open-next.config.edge.mjs` before the deploy command starts.
-Using `npm run build` alone only generates Next.js output. Wrangler may delegate
-to OpenNext before running a custom Wrangler build, so there is deliberately no
-custom `build.command` in `wrangler.jsonc`.
+The default build now creates these files. Wrangler may delegate to OpenNext
+before running a custom Wrangler build, so there is deliberately no custom
+`build.command` in `wrangler.jsonc`. An explicit build command of
+`npm run build:cloudflare` and deploy command of
+`npx opennextjs-cloudflare deploy` also work.
 
 For a single command that builds and then deploys, use `npm run deploy`.
 This script explicitly runs OpenNext build before OpenNext deploy. It can also
