@@ -10,7 +10,9 @@
   },
   "keep_vars": true,
   "vars": {
+    "ADMIN_USER_IDS": "SxkkOxcQeZK1v3Wq3EvIdLJol1A3VRUs",
     "BETTER_AUTH_URL": "https://piano.nxh23012007.workers.dev",
-    "R2_ACCOUNT_ID": "9d22dd3a01ec2af16304a6245caf9fa6"
+    "R2_ACCOUNT_ID": "9d22dd3a01ec2af16304a6245caf9fa6",
+    "R2_BUCKET": "piano-assets"
   }
 }

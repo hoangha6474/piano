@@ -21,17 +21,30 @@ const statusName = {
   published: "Đã xuất bản",
   hidden: "Đã ẩn",
 };
+class ApiError extends Error {
+  constructor(
+    message: string,
+    readonly status: number,
+  ) {
+    super(message);
+  }
+}
 async function api<T>(url: string, options?: RequestInit): Promise<T> {
   const response = await fetch(url, { ...options, cache: "no-store" });
   const data = await response.json();
   if (!response.ok)
-    throw new Error(data.error || "Không thực hiện được yêu cầu.");
+    throw new ApiError(
+      data.error || "Không thực hiện được yêu cầu.",
+      response.status,
+    );
   return data;
 }
 export function AdminLibrary() {
   const { refresh: refreshCatalog } = useSystemLibrary();
   const [items, setItems] = useState<AdminLibraryItem[]>([]),
-    [access, setAccess] = useState<"loading" | "allowed" | "denied">("loading");
+    [access, setAccess] = useState<"loading" | "allowed" | "denied" | "error">(
+      "loading",
+    );
   const [message, setMessage] = useState(""),
     [busy, setBusy] = useState(false),
     [editor, setEditor] = useState<{
@@ -41,11 +54,17 @@ export function AdminLibrary() {
   const [metadata, setMetadata] = useState<Metadata>(),
     [search, setSearch] = useState("");
   const reload = useCallback(async () => {
+    setAccess("loading");
+    setMessage("");
     try {
       setItems(await api<AdminLibraryItem[]>("/api/admin/library"));
       setAccess("allowed");
     } catch (e) {
-      setAccess("denied");
+      setAccess(
+        e instanceof ApiError && [401, 403].includes(e.status)
+          ? "denied"
+          : "error",
+      );
       setMessage(
         e instanceof Error ? e.message : "Không mở được trang quản trị.",
       );
@@ -173,6 +192,17 @@ export function AdminLibrary() {
                 Kiểm tra lại
               </button>
             </div>
+          }
+        />
+      )}
+      {access === "error" && (
+        <Empty
+          title="Chưa tải được thư viện quản trị"
+          description="Không đọc được dữ liệu thư viện. Nếu mới cài đặt, hãy chạy migration tạo bảng library_scores trên database Neon của website."
+          action={
+            <button className="button secondary" onClick={() => void reload()}>
+              Kiểm tra lại
+            </button>
           }
         />
       )}

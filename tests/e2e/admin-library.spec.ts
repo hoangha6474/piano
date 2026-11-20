@@ -5,6 +5,38 @@ import { readMusicXML } from "../../src/music/musicxml";
 import type { AdminLibraryDetail } from "../../src/music/catalog";
 import type { Score } from "../../src/music/model";
 
+test("database failure is not shown as missing admin permission and can be retried", async ({
+  page,
+}) => {
+  let available = false;
+  await page.route("**/api/admin/library", (route) =>
+    route.fulfill(
+      available
+        ? { json: [] }
+        : {
+            status: 503,
+            json: {
+              error:
+                "Không đọc được thư viện quản trị. Kiểm tra cấu hình và migration.",
+            },
+          },
+    ),
+  );
+  await page.goto("/admin");
+  await expect(
+    page.getByRole("heading", { name: "Chưa tải được thư viện quản trị" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Cần quyền quản trị" }),
+  ).toHaveCount(0);
+  available = true;
+  await page.getByRole("button", { name: "Kiểm tra lại" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Bản nhạc do admin thêm" }),
+  ).toBeVisible();
+  await expect(page.getByRole("status")).toHaveCount(0);
+});
+
 test("admin endpoints require authentication and learners cannot upload", async ({
   page,
   request,
