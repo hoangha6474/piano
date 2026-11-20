@@ -11,7 +11,7 @@ npm.cmd ci
 npm.cmd run dev
 ```
 
-Mở http://127.0.0.1:3000. Không cần tài khoản dịch vụ để xem giáo trình, phát mẫu, luyện tai, nhập bản nhạc và dùng MIDI cục bộ. Quyền MIDI và audio do trình duyệt quản lý; âm thanh bắt đầu sau thao tác người dùng.
+Mở http://127.0.0.1:3000. Không cần tài khoản dịch vụ để xem giáo trình, phát mẫu, nhập bản nhạc và dùng MIDI cục bộ. Quyền MIDI và audio do trình duyệt quản lý; âm thanh bắt đầu sau thao tác người dùng.
 
 ```powershell
 npm.cmd run typecheck
@@ -49,7 +49,6 @@ Không có kết nối Neon/R2/AI thật trong lần kiểm thử ban đầu do 
 - Chờ nốt/hợp âm, luyện riêng tay, tempo, Count-in, metronome, nghe mẫu, phần đệm, đoạn A–B và lưu lượt luyện.
 - Thuật toán đo cao độ, nốt sai/thiếu/thừa, thời điểm và trường độ. Dung sai hiện là **thử nghiệm**, chưa có điểm tổng hợp có trọng số được phê duyệt.
 - Thư viện bài tập gốc, nhập MIDI/MusicXML cá nhân, phân tay suy luận và sửa gán bè.
-- Luyện tai với các nhóm nốt, cao/thấp, quãng, hợp âm, giai điệu, tiết tấu, ghi nhớ và hướng chuyển động; có câu trả lời MIDI.
 - Gam trưởng/thứ tự nhiên, quãng tám, hợp âm ba/bảy át, đảo hợp âm, chuyển hợp âm và arpeggio.
 - Ghi chú, màu, đánh dấu nốt, số ngón cá nhân, lịch lặp, mục tiêu và tiến độ dạng bảng.
 - Backend Better Auth/Neon, đồng bộ snapshot có chống ghi đè phiên bản, file R2 riêng tư và AI Tutor có hạn mức.

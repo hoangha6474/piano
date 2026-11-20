@@ -8,7 +8,6 @@ import {
   Music2,
   Library,
   FolderHeart,
-  Headphones,
   AudioLines,
   ChartNoAxesColumn,
   CalendarDays,
@@ -26,7 +25,6 @@ import { Dashboard } from "@/features/dashboard";
 import { Curriculum, Lesson } from "@/features/curriculum";
 import { Library as MusicLibrary } from "@/features/library";
 import { Practice } from "@/features/practice";
-import { EarTraining } from "@/features/ear-training";
 import { Technique } from "@/features/technique";
 import { Progress } from "@/features/progress";
 import { Schedule } from "@/features/schedule";
@@ -42,7 +40,6 @@ const navigation = [
   { id: "practice", label: "Luyện Piano", icon: Music2 },
   { id: "library", label: "Thư viện bản nhạc", icon: Library },
   { id: "my-scores", label: "Bản nhạc của tôi", icon: FolderHeart },
-  { id: "ear-training", label: "Luyện tai nghe", icon: Headphones },
   { id: "technique", label: "Gam & hợp âm", icon: AudioLines },
   { id: "progress", label: "Tiến độ học tập", icon: ChartNoAxesColumn },
   { id: "schedule", label: "Lịch luyện tập", icon: CalendarDays },
@@ -87,9 +84,6 @@ export function Workspace({ section }: { section: string }) {
         break;
       case "my-scores":
         content = <MusicLibrary personal />;
-        break;
-      case "ear-training":
-        content = <EarTraining />;
         break;
       case "technique":
         content = <Technique />;
@@ -214,10 +208,10 @@ export function Workspace({ section }: { section: string }) {
         </div>
         <div className="sidebar-label">KHÔNG GIAN CỦA BẠN</div>
         <nav id="sidebar-navigation">
-          {navigation.map((n, i) => (
+          {navigation.map((n) => (
             <div key={n.id}>
-              {i === 5 && <div className="nav-divider" />}
-              {i === 7 && <div className="nav-divider" />}
+              {n.id === "technique" && <div className="nav-divider" />}
+              {n.id === "progress" && <div className="nav-divider" />}
               <Link
                 className={`nav-item ${section === n.id || (section === "lessons" && n.id === "curriculum") ? "active" : ""}`}
                 href={n.id === "home" ? "/" : `/${n.id}`}

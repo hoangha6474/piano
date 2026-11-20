@@ -1739,64 +1739,6 @@ td {
   color: #a0a993;
   margin: 18px 0;
 }
-.ear-layout {
-  display: grid;
-  grid-template-columns: 270px 1fr;
-  gap: 24px;
-}
-.ear-sidebar {
-  align-self: start;
-}
-.ear-sidebar > h3 {
-  font-size: 14px;
-}
-.ear-kind {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px;
-  border: 0;
-  border-radius: 5px;
-  width: 100%;
-  background: none;
-  color: #8f9b7d;
-  text-align: left;
-  font-size: 11px;
-}
-.ear-kind.active {
-  background: var(--olive-light);
-  color: #657b4a;
-}
-.ear-stage {
-  text-align: center;
-  padding: 40px;
-  min-height: 600px;
-}
-.listening-orb {
-  border-radius: 50%;
-  width: 140px;
-  height: 140px;
-  background: #f1f4e8;
-  border: 1px solid #e2e9d3;
-  color: #879e68;
-  display: grid;
-  place-items: center;
-  margin: 40px auto 25px;
-  box-shadow:
-    0 0 0 13px #f7f9f2,
-    0 0 0 14px #f0f3e9;
-}
-.listening-orb.listening {
-  animation: listen 1s infinite;
-}
-.ear-stage h2 {
-  font-size: 23px;
-  margin-bottom: 10px;
-}
-.ear-stage > p {
-  font-size: 12px;
-  margin-bottom: 25px;
-}
 .answer-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1817,18 +1759,6 @@ td {
 .answer-option.correct {
   background: #253b28;
   border-color: #6f8b60;
-}
-.ear-stage > .inline-actions {
-  justify-content: center;
-  margin-top: 25px;
-}
-.ear-sidebar .stacked-form label {
-  font-size: 10px;
-}
-.ear-sidebar .stacked-form input,
-.ear-sidebar .stacked-form select {
-  font-size: 11px;
-  padding: 7px 9px;
 }
 .technique-config .form-grid {
   grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -2076,13 +2006,6 @@ fieldset {
   font-size: 10px;
   margin: 15px 0 0;
 }
-@keyframes listen {
-  50% {
-    box-shadow:
-      0 0 0 20px #f4f7ec,
-      0 0 0 22px #e7eddb;
-  }
-}
 @keyframes finger-lift {
   0%,
   15%,
@@ -2176,9 +2099,6 @@ fieldset {
   .curriculum-layout,
   .lesson-layout {
     grid-template-columns: 1fr 260px;
-  }
-  .ear-layout {
-    grid-template-columns: 240px 1fr;
   }
   .tutor-layout {
     grid-template-columns: 1fr 230px;
@@ -2325,30 +2245,11 @@ fieldset {
   }
   .curriculum-layout,
   .lesson-layout,
-  .ear-layout,
   .tutor-layout {
     grid-template-columns: 1fr;
   }
-  .ear-sidebar {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 5px;
-  }
-  .ear-sidebar > h3,
-  .ear-sidebar > hr,
-  .ear-sidebar > .stacked-form {
-    grid-column: 1/-1;
-  }
-  .ear-sidebar > .stacked-form {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    margin: 0;
-  }
   .tutor-context {
     display: none;
-  }
-  .ear-stage {
-    min-height: 500px;
   }
   .two-column {
     gap: 16px;
@@ -2773,31 +2674,6 @@ fieldset {
   }
   .technique-config .form-grid {
     grid-template-columns: 1fr 1fr;
-  }
-  .ear-sidebar {
-    padding: 18px;
-  }
-  .ear-kind {
-    font-size: 10px;
-    gap: 7px;
-    padding: 9px 6px;
-  }
-  .ear-sidebar > .stacked-form {
-    grid-template-columns: 1fr 1fr;
-  }
-  .ear-stage {
-    padding: 28px 19px;
-  }
-  .ear-stage h2 {
-    font-size: 21px;
-  }
-  .ear-stage > p {
-    font-size: 11px;
-  }
-  .listening-orb {
-    width: 110px;
-    height: 110px;
-    margin-top: 30px;
   }
   .answer-option {
     padding: 14px 8px;

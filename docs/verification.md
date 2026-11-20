@@ -5,7 +5,7 @@ Môi trường: Windows, Node.js 22.13, Next.js 16.4.6. Các kiểm thử trình
 ## Đã đạt
 
 - TypeScript và build production; các trang học được prerender, API riêng tư chạy động theo cấu hình Next.js.
-- 17 unit tests: Note On/Off, velocity, pedal, channel/device, nốt lặp, phục hồi mất Note Off, ghép nốt một–một, thiếu/thừa/sai nốt, thời điểm/trường độ, thay đổi tempo, hợp âm chế độ chờ, ký âm và dấu chấm dôi, luyện tai, số ngón gam và số đo kỹ năng.
+- Unit tests: Note On/Off, velocity, pedal, channel/device, nốt lặp, phục hồi mất Note Off, ghép nốt một–một, thiếu/thừa/sai nốt, thời điểm/trường độ, thay đổi tempo, hợp âm chế độ chờ, ký âm và dấu chấm dôi, số ngón gam và số đo kỹ năng.
 - Bộ E2E chính gồm 6 trường hợp: MIDI đi hết bài và lưu kết quả; điều hướng/desktop/mobile; OSMD ánh xạ đủ nốt và chú thích giữ sau reload; lịch và hoàn thành buổi; nhập MusicXML cá nhân; API từ chối truy cập ẩn danh/nguồn ghi không hợp lệ.
 - Kiểm thử E2E bổ sung: gam hai tay có 30 nốt hiển thị/ánh xạ, số ngón đầu tay trái là 5, trang kỹ năng không hiện kết quả giả khi chưa có dữ liệu.
 - `npm audit`: không phát hiện lỗ hổng sau cập nhật dependency.

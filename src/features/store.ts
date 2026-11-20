@@ -37,7 +37,7 @@ export interface Plan {
 }
 export interface Goal {
   id: string;
-  kind: "minutes" | "accuracy" | "lessons" | "skill";
+  kind: "minutes" | "accuracy" | "lessons";
   target: number;
   title: string;
 }
@@ -54,7 +54,6 @@ interface Data {
   preferences: Record<string, { bpm: number; hand: string }>;
   plans: Plan[];
   goals: Goal[];
-  ear: { at: string; correct: boolean; skill: string }[];
 }
 export type Snapshot = Data;
 interface State extends Data {
@@ -78,7 +77,6 @@ interface State extends Data {
   togglePlan: (id: string, date: string) => void;
   addGoal: (g: Goal) => void;
   removeGoal: (id: string) => void;
-  addEar: (correct: boolean, skill: string) => void;
   replace: (data: Data) => void;
 }
 export const emptyData: Data = {
@@ -94,7 +92,6 @@ export const emptyData: Data = {
   preferences: {},
   plans: [],
   goals: [],
-  ear: [],
 };
 export const useLearning = create<State>()(
   persist(
@@ -162,18 +159,16 @@ export const useLearning = create<State>()(
       addGoal: (g) => set((s) => ({ goals: [...s.goals, g] })),
       removeGoal: (id) =>
         set((s) => ({ goals: s.goals.filter((g) => g.id !== id) })),
-      addEar: (correct, skill) =>
-        set((s) => ({
-          ear: [
-            { at: new Date().toISOString(), correct, skill },
-            ...s.ear,
-          ].slice(0, 2000),
-        })),
-      replace: (data) => set(data),
+      replace: (data) => set(snapshot(data)),
     }),
     {
       name: "piano-learning-v1",
-      version: 1,
+      version: 2,
+      migrate: (data) => snapshot(data as Partial<Data>),
+      merge: (persisted, current) => ({
+        ...current,
+        ...snapshot(persisted as Partial<Data>),
+      }),
       storage: createJSONStorage(() => {
         if (typeof window === "undefined")
           throw new Error("Browser storage only");
@@ -184,8 +179,15 @@ export const useLearning = create<State>()(
     },
   ),
 );
-export function snapshot(s: Data): Data {
-  return Object.fromEntries(
-    Object.keys(emptyData).map((k) => [k, s[k as keyof Data]]),
+export function snapshot(s: Partial<Data> = {}): Data {
+  const data = Object.fromEntries(
+    Object.keys(emptyData).map((k) => [
+      k,
+      s[k as keyof Data] ?? emptyData[k as keyof Data],
+    ]),
   ) as unknown as Data;
+  data.goals = data.goals.filter((g) =>
+    ["minutes", "accuracy", "lessons"].includes(g.kind),
+  );
+  return data;
 }

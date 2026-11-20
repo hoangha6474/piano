@@ -77,13 +77,14 @@ const schema = z.object({
     goals: z
       .array(
         z
-          .object({ id: string, target: z.number().nonnegative() })
+          .object({
+            id: string,
+            kind: z.enum(["minutes", "accuracy", "lessons"]),
+            target: z.number().nonnegative(),
+          })
           .passthrough(),
       )
       .max(1000),
-    ear: z
-      .array(z.object({ at: string, correct: z.boolean(), skill: string }))
-      .max(2000),
   }),
 });
 export async function GET() {

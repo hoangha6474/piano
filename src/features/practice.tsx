@@ -4,15 +4,11 @@ import {
   Play,
   Pause,
   Square,
-  Settings2,
   SlidersHorizontal,
   Volume2,
   Usb,
   RotateCcw,
   ChevronLeft,
-  Plus,
-  Trash2,
-  Save,
   Lightbulb,
 } from "lucide-react";
 import { useLearning } from "./store";

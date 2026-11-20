@@ -295,8 +295,7 @@ export function Schedule() {
               state.addGoal({
                 id: crypto.randomUUID(),
                 title: String(fd.get("title")),
-                kind: fd.get("kind") as
-                  "minutes" | "accuracy" | "lessons" | "skill",
+                kind: fd.get("kind") as "minutes" | "accuracy" | "lessons",
                 target: Number(fd.get("target")),
               });
               setGoalForm(false);
@@ -312,7 +311,6 @@ export function Schedule() {
                 <option value="minutes">Tổng phút luyện</option>
                 <option value="lessons">Bài hoàn thành</option>
                 <option value="accuracy">Độ chính xác nốt (%)</option>
-                <option value="skill">Câu luyện tai đúng</option>
               </select>
             </label>
             <label>
@@ -332,9 +330,7 @@ export function Schedule() {
                 )
               : g.kind === "lessons"
                 ? state.completed.length
-                : g.kind === "skill"
-                  ? state.ear.filter((e) => e.correct).length
-                  : state.results[0]?.evaluation.accuracy || 0;
+                : state.results[0]?.evaluation.accuracy || 0;
           return (
             <Card key={g.id}>
               <div className="stat-top">
@@ -365,7 +361,7 @@ export function Schedule() {
       {!state.goals.length && (
         <p className="muted">
           Chọn một mục tiêu nhỏ, rõ ràng: thời gian luyện, bài hoàn thành, cao
-          độ hoặc luyện tai.
+          độ.
         </p>
       )}
       <SectionTitle title="Đối chiếu ngày đang xem" />

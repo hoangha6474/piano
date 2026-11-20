@@ -2,7 +2,6 @@
 import type { Dispatch, SetStateAction } from "react";
 import type { Score } from "@/music/model";
 import { Card } from "@/components/ui";
-import type { useLearning } from "./store";
 import { noteName, scoreBeats } from "@/music/model";
 import { measurementPolicy, type Evaluation } from "@/music/evaluation";
 interface Props {

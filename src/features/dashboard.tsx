@@ -5,7 +5,6 @@ import {
   Plus,
   Music2,
   BookOpen,
-  Headphones,
   Search,
   Check,
   Clock3,
@@ -203,14 +202,6 @@ export function Dashboard() {
         </div>
       </div>
       <div className={s.lower}>
-        <Link href="/ear-training">
-          <Headphones size={24} />
-          <div>
-            <strong>Lắng nghe & cảm nhận</strong>
-            <p>Rèn đôi tai âm nhạc của bạn</p>
-          </div>
-          <ArrowUpRight size={19} />
-        </Link>
         <Link href="/library">
           <BookOpen size={24} />
           <div>

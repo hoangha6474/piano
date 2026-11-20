@@ -134,20 +134,6 @@ export function Progress() {
           không được tính là đúng nhịp.
         </p>
       </Card>
-      <Card>
-        <div className="metric-row">
-          <span>Số câu luyện tai đã trả lời</span>
-          <strong>{state.ear.length}</strong>
-        </div>
-        <div className="metric-row">
-          <span>Đáp án chính xác</span>
-          <strong>
-            {state.ear.length
-              ? `${Math.round((state.ear.filter((e) => e.correct).length / state.ear.length) * 100)}%`
-              : "—"}
-          </strong>
-        </div>
-      </Card>
       <SectionTitle title="Lịch sử luyện tập" />
       {state.results.length ? (
         <Card className="table-scroll">

@@ -8,7 +8,6 @@ const sections = [
   "practice",
   "library",
   "my-scores",
-  "ear-training",
   "technique",
   "progress",
   "schedule",

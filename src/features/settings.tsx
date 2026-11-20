@@ -4,7 +4,6 @@ import { createAuthClient } from "better-auth/react";
 import {
   Usb,
   Cloud,
-  Check,
   Download,
   Upload,
   LogOut,

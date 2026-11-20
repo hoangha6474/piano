@@ -55,44 +55,6 @@ export class PianoAudio {
         envelope: { attack: 0.001, decay: 0.025, sustain: 0, release: 0.01 },
       }).toDestination();
   }
-  async playNotes(
-    notes: number[],
-    duration = 0.7,
-    timbre: "piano" | "sine" = "piano",
-  ) {
-    await this.initialize();
-    this.synth!.set({
-      oscillator: { type: timbre === "sine" ? "sine" : "triangle" },
-    });
-    this.synth!.triggerAttackRelease(
-      notes.map(pitchName),
-      duration,
-      Tone.now(),
-      0.55,
-    );
-  }
-  async stimulus(
-    events: { notes: number[]; duration: number }[],
-    timbre: "piano" | "sine" = "piano",
-  ) {
-    await this.initialize();
-    this.synth!.releaseAll();
-    this.synth!.set({
-      oscillator: { type: timbre === "sine" ? "sine" : "triangle" },
-    });
-    let offset = 0;
-    const start = Tone.now();
-    for (const event of events) {
-      this.synth!.triggerAttackRelease(
-        event.notes.map(pitchName),
-        event.duration * 0.8,
-        start + offset,
-        0.55,
-      );
-      offset += event.duration;
-    }
-    return offset;
-  }
   private seconds(beat: number) {
     const score = this.score!,
       opts = this.opts!;
