@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import {
   House,
   BookOpen,
@@ -17,6 +17,7 @@ import {
   Menu,
   X,
   ChevronRight,
+  ChevronLeft,
   ArrowUpRight,
   Leaf,
   Plus,
@@ -34,6 +35,7 @@ import { Settings } from "@/features/settings";
 import { Assessment } from "@/features/assessment";
 import { useLearning } from "@/features/store";
 import { library } from "@/music/library";
+import { useSidebarLayout } from "./use-sidebar-layout";
 const navigation = [
   { id: "home", label: "Tổng quan", icon: House },
   { id: "curriculum", label: "Giáo trình", icon: BookOpen },
@@ -47,6 +49,7 @@ const navigation = [
   { id: "tutor", label: "AI giáo viên", icon: Sparkles },
 ];
 export function Workspace({ section }: { section: string }) {
+  const sidebar = useSidebarLayout();
   const [storageError, setStorageError] = useState(false);
   useEffect(() => {
     const handler = () => setStorageError(true);
@@ -107,14 +110,81 @@ export function Workspace({ section }: { section: string }) {
         content = <Dashboard />;
     }
   return (
-    <div className={`app ${section === "home" ? "home-workspace" : ""}`}>
+    <div
+      className={`app ${section === "home" ? "home-workspace" : ""} ${sidebar.collapsed ? "sidebar-collapsed" : ""} ${sidebar.resizing ? "sidebar-resizing" : ""}`}
+      style={
+        sidebar.width
+          ? ({ "--sidebar-width": `${sidebar.width}px` } as CSSProperties)
+          : undefined
+      }
+    >
       <a href="#main" className="skip-link">
         Chuyển đến nội dung
       </a>
       {menu && (
         <div className="sidebar-backdrop" onClick={() => setMenu(false)} />
       )}
-      <aside className={`sidebar ${menu ? "open" : ""}`}>
+      <aside id="sidebar" className={`sidebar ${menu ? "open" : ""}`}>
+        <button
+          className="sidebar-toggle"
+          onClick={() => sidebar.setCollapsed(!sidebar.collapsed)}
+          aria-label={
+            sidebar.collapsed ? "Mở rộng thanh bên" : "Thu gọn thanh bên"
+          }
+          title={sidebar.collapsed ? "Mở rộng thanh bên" : "Thu gọn thanh bên"}
+          aria-expanded={!sidebar.collapsed}
+          aria-controls="sidebar-navigation"
+        >
+          {sidebar.collapsed ? (
+            <ChevronRight size={17} />
+          ) : (
+            <ChevronLeft size={17} />
+          )}
+        </button>
+        <div
+          className="sidebar-resize"
+          role="separator"
+          tabIndex={0}
+          aria-label="Điều chỉnh độ rộng thanh bên"
+          aria-orientation="vertical"
+          aria-valuemin={76}
+          aria-valuemax={360}
+          aria-valuenow={sidebar.collapsed ? 76 : (sidebar.width ?? 258)}
+          aria-controls="sidebar"
+          title="Kéo để chỉnh độ rộng; kéo sát trái để thu gọn"
+          onPointerDown={(event) => {
+            if (event.button !== 0) return;
+            event.preventDefault();
+            event.currentTarget.setPointerCapture(event.pointerId);
+            sidebar.setResizing(true);
+          }}
+          onPointerMove={(event) => {
+            if (!event.currentTarget.hasPointerCapture(event.pointerId)) return;
+            sidebar.resize(
+              event.clientX -
+                event.currentTarget.parentElement!.getBoundingClientRect().left,
+            );
+          }}
+          onPointerUp={(event) => {
+            if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+              event.currentTarget.releasePointerCapture(event.pointerId);
+            }
+            sidebar.setResizing(false);
+          }}
+          onLostPointerCapture={() => sidebar.setResizing(false)}
+          onPointerCancel={() => sidebar.setResizing(false)}
+          onKeyDown={(event) => {
+            const current = sidebar.collapsed ? 76 : (sidebar.width ?? 258);
+            if (event.key === "ArrowLeft")
+              sidebar.resize(current <= 220 ? 76 : current - 16);
+            else if (event.key === "ArrowRight")
+              sidebar.resize(sidebar.collapsed ? 220 : current + 16);
+            else if (event.key === "Home") sidebar.setCollapsed(true);
+            else if (event.key === "End") sidebar.resize(360);
+            else return;
+            event.preventDefault();
+          }}
+        />
         <Link href="/" className="brand" aria-label="Piano Learning, trang chủ">
           <span className="brand-symbol">
             <i />
@@ -135,15 +205,15 @@ export function Workspace({ section }: { section: string }) {
           <X size={20} />
         </button>
         <div className="sidebar-actions">
-          <Link href="/practice" aria-label="Bắt đầu luyện piano">
-            <Plus size={25} /> LUYỆN PIANO
+          <Link href="/practice" aria-label="Bắt đầu luyện piano" title="Luyện Piano">
+            <Plus size={25} /> <span>LUYỆN PIANO</span>
           </Link>
-          <Link href="/my-scores" aria-label="Mở bản nhạc của tôi">
-            <Plus size={25} /> BẢN NHẠC CỦA TÔI
+          <Link href="/my-scores" aria-label="Mở bản nhạc của tôi" title="Bản nhạc của tôi">
+            <Plus size={25} /> <span>BẢN NHẠC CỦA TÔI</span>
           </Link>
         </div>
         <div className="sidebar-label">KHÔNG GIAN CỦA BẠN</div>
-        <nav>
+        <nav id="sidebar-navigation">
           {navigation.map((n, i) => (
             <div key={n.id}>
               {i === 5 && <div className="nav-divider" />}
@@ -151,6 +221,8 @@ export function Workspace({ section }: { section: string }) {
               <Link
                 className={`nav-item ${section === n.id || (section === "lessons" && n.id === "curriculum") ? "active" : ""}`}
                 href={n.id === "home" ? "/" : `/${n.id}`}
+                aria-label={n.label}
+                title={n.label}
                 onClick={() => setMenu(false)}
               >
                 <n.icon size={19} strokeWidth={1.65} />
@@ -172,6 +244,8 @@ export function Workspace({ section }: { section: string }) {
           <Link
             className={`nav-item ${section === "settings" ? "active" : ""}`}
             href="/settings"
+            aria-label="Cài đặt & kết nối"
+            title="Cài đặt & kết nối"
           >
             <Settings2 size={19} />
             <span>Cài đặt & kết nối</span>

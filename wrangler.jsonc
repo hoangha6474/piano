@@ -10,6 +10,7 @@
   },
   "keep_vars": true,
   "vars": {
-    "BETTER_AUTH_URL": "https://piano.nxh23012007.workers.dev"
+    "BETTER_AUTH_URL": "https://piano.nxh23012007.workers.dev",
+    "R2_ACCOUNT_ID": "9d22dd3a01ec2af16304a6245caf9fa6"
   }
 }
