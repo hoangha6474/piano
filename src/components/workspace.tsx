@@ -7,7 +7,6 @@ import {
   BookOpen,
   Music2,
   Library,
-  FolderHeart,
   AudioLines,
   ChartNoAxesColumn,
   CalendarDays,
@@ -24,7 +23,8 @@ import {
 import { Dashboard } from "@/features/dashboard";
 import { Curriculum, Lesson } from "@/features/curriculum";
 import { Library as MusicLibrary } from "@/features/library";
-import { Practice } from "@/features/practice";
+import { SystemPractice } from "@/features/system-practice";
+import { AdminLibrary } from "@/features/admin-library";
 import { Technique } from "@/features/technique";
 import { Progress } from "@/features/progress";
 import { Schedule } from "@/features/schedule";
@@ -32,14 +32,12 @@ import { Tutor } from "@/features/tutor";
 import { Settings } from "@/features/settings";
 import { Assessment } from "@/features/assessment";
 import { useLearning } from "@/features/store";
-import { library } from "@/music/library";
 import { useSidebarLayout } from "./use-sidebar-layout";
 const navigation = [
   { id: "home", label: "Tổng quan", icon: House },
   { id: "curriculum", label: "Giáo trình", icon: BookOpen },
   { id: "practice", label: "Luyện Piano", icon: Music2 },
   { id: "library", label: "Thư viện bản nhạc", icon: Library },
-  { id: "my-scores", label: "Bản nhạc của tôi", icon: FolderHeart },
   { id: "technique", label: "Gam & hợp âm", icon: AudioLines },
   { id: "progress", label: "Tiến độ học tập", icon: ChartNoAxesColumn },
   { id: "schedule", label: "Lịch luyện tập", icon: CalendarDays },
@@ -59,9 +57,6 @@ export function Workspace({ section }: { section: string }) {
   useEffect(() => {
     if (useLearning.persist.hasHydrated()) useLearning.getState().markReady();
   }, []);
-  const selectedScore =
-    [...library, ...state.scores].find((s) => s.id === query.get("score")) ||
-    library[0];
   let content;
   if (!state.ready)
     content = <div className="boot">Đang mở hành trình của bạn…</div>;
@@ -77,13 +72,13 @@ export function Workspace({ section }: { section: string }) {
         content = <Lesson id={query.get("id") || state.lastLesson} />;
         break;
       case "practice":
-        content = <Practice key={selectedScore.id} score={selectedScore} />;
+        content = <SystemPractice id={query.get("score")} />;
+        break;
+      case "admin":
+        content = <AdminLibrary />;
         break;
       case "library":
         content = <MusicLibrary />;
-        break;
-      case "my-scores":
-        content = <MusicLibrary personal />;
         break;
       case "technique":
         content = <Technique />;
@@ -199,11 +194,19 @@ export function Workspace({ section }: { section: string }) {
           <X size={20} />
         </button>
         <div className="sidebar-actions">
-          <Link href="/practice" aria-label="Bắt đầu luyện piano" title="Luyện Piano">
+          <Link
+            href="/practice"
+            aria-label="Bắt đầu luyện piano"
+            title="Luyện Piano"
+          >
             <Plus size={25} /> <span>LUYỆN PIANO</span>
           </Link>
-          <Link href="/my-scores" aria-label="Mở bản nhạc của tôi" title="Bản nhạc của tôi">
-            <Plus size={25} /> <span>BẢN NHẠC CỦA TÔI</span>
+          <Link
+            href="/library"
+            aria-label="Mở thư viện bản nhạc"
+            title="Thư viện bản nhạc"
+          >
+            <Library size={25} /> <span>THƯ VIỆN BẢN NHẠC</span>
           </Link>
         </div>
         <div className="sidebar-label">KHÔNG GIAN CỦA BẠN</div>
@@ -270,12 +273,14 @@ export function Workspace({ section }: { section: string }) {
             Không gian học tập
             <ChevronRight size={13} />
             <span>
-              {section === "settings"
-                ? "Cài đặt"
-                : section === "lessons"
-                  ? "Bài học"
-                  : navigation.find((n) => n.id === section)?.label ||
-                    "Tổng quan"}
+              {section === "admin"
+                ? "Quản trị thư viện"
+                : section === "settings"
+                  ? "Cài đặt"
+                  : section === "lessons"
+                    ? "Bài học"
+                    : navigation.find((n) => n.id === section)?.label ||
+                      "Tổng quan"}
             </span>
           </div>
           <Link className="topbar-tip" href="/settings">

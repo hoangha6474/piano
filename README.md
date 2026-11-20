@@ -11,7 +11,7 @@ npm.cmd ci
 npm.cmd run dev
 ```
 
-Mở http://127.0.0.1:3000. Không cần tài khoản dịch vụ để xem giáo trình, phát mẫu, nhập bản nhạc và dùng MIDI cục bộ. Quyền MIDI và audio do trình duyệt quản lý; âm thanh bắt đầu sau thao tác người dùng.
+Mở http://127.0.0.1:3000. Không cần tài khoản dịch vụ để xem giáo trình, phát mẫu, luyện nhạc trong thư viện hệ thống và dùng MIDI cục bộ. Quyền MIDI và audio do trình duyệt quản lý; âm thanh bắt đầu sau thao tác người dùng.
 
 ```powershell
 npm.cmd run typecheck
@@ -48,10 +48,15 @@ Không có kết nối Neon/R2/AI thật trong lần kiểm thử ban đầu do 
 - Web MIDI nhận Note On/Off, channel, velocity, timestamp, CC64; tách trạng thái phím khỏi pedal và phục hồi khi mất kết nối.
 - Chờ nốt/hợp âm, luyện riêng tay, tempo, Count-in, metronome, nghe mẫu, phần đệm, đoạn A–B và lưu lượt luyện.
 - Thuật toán đo cao độ, nốt sai/thiếu/thừa, thời điểm và trường độ. Dung sai hiện là **thử nghiệm**, chưa có điểm tổng hợp có trọng số được phê duyệt.
-- Thư viện bài tập gốc, nhập MIDI/MusicXML cá nhân, phân tay suy luận và sửa gán bè.
+- Người học chỉ sử dụng thư viện bản nhạc và bài tập của hệ thống; không hỗ trợ tải lên bản nhạc riêng.
+- Admin quản lý nhạc chung tại `/admin`: thêm MusicXML, xem trước sheet, sửa metadata, lưu nháp, xuất bản và ẩn bài; thư viện người học cập nhật không cần deploy.
 - Gam trưởng/thứ tự nhiên, quãng tám, hợp âm ba/bảy át, đảo hợp âm, chuyển hợp âm và arpeggio.
 - Ghi chú, màu, đánh dấu nốt, số ngón cá nhân, lịch lặp, mục tiêu và tiến độ dạng bảng.
-- Backend Better Auth/Neon, đồng bộ snapshot có chống ghi đè phiên bản, file R2 riêng tư và AI Tutor có hạn mức.
+- Backend Better Auth/Neon, đồng bộ snapshot có chống ghi đè phiên bản, tải về tệp R2 đã lưu trước đây và AI Tutor có hạn mức.
+
+## Quản trị thư viện
+
+Xem [hướng dẫn cấp quyền và vận hành thư viện](docs/operations.md#quản-trị-thư-viện-nhạc). Cần chạy migration mới, cấu hình Neon/R2 và đặt `ADMIN_USER_IDS` bằng ID tài khoản Better Auth. Mã tài khoản hiển thị trong Cài đặt sau khi đăng nhập. Không tự cấp quyền theo email hoặc tài khoản đăng ký đầu tiên.
 
 ## Lưu dữ liệu
 
@@ -59,12 +64,11 @@ Dữ liệu cục bộ nằm trong IndexedDB, có đọc dữ liệu localStorag
 
 Schema quan hệ gồm dữ liệu giáo trình, bản nhạc, phiên bản, bài tập, buổi/lượt luyện, kết quả, lỗi, lịch, mục tiêu và auth. Trong bản hiện tại, UI cục bộ đồng bộ qua `learning_workspaces`; các bảng nghiệp vụ chuẩn hóa được chuẩn bị cho bước lưu chi tiết tiếp theo. Không gọi đây là cơ chế persistence chuẩn hóa hoàn chỉnh.
 
-Không lưu file nhị phân vào PostgreSQL. API R2 kiểm tra file trước khi lưu, xác thực chủ sở hữu khi tải/xóa và cấp URL GET 60 giây. Không có URL public cho file cá nhân. Không lưu hoặc phát lại toàn bộ màn biểu diễn.
+Không lưu file nhị phân vào PostgreSQL. API tải lên bản nhạc riêng trả về 403. Dữ liệu nhạc riêng đã có được giữ nguyên để lưu trữ, không xuất hiện trong thư viện hoặc trình chọn nhạc. API R2 chỉ hỗ trợ tải về/xóa tệp cũ theo quyền sở hữu và cấp URL GET 60 giây. Không có URL public cho file cá nhân. Không lưu hoặc phát lại toàn bộ màn biểu diễn.
 
 ## Giới hạn cần nghiệm thu
 
 - Chưa thử đàn Victor VT02, Bluetooth MIDI, độ trễ vật lý hoặc âm thanh trên phần cứng của người dùng.
-- Bộ chuyển MIDI hiện lượng tử hóa 1/16 và từ chối trường hợp bè chồng/nốt qua ô nhịp mà bộ chuyển đơn giản không biểu diễn đúng. Dùng MusicXML để bảo toàn ký âm phức tạp. `.mxl` cần giải nén trước.
 - MusicXML hiện hỗ trợ `score-partwise`; không thực hiện lặp dấu hồi tấu/Da Capo như bộ giải diễn tấu đầy đủ. Cần kiểm chứng trước khi dùng chấm tác phẩm có cấu trúc đó.
 - Thế bấm là heuristic có thể sửa, không tối ưu cho mọi tay/giọng/bản nhạc. MIDI không đo ngón tay thực tế.
 - Giáo trình hiện là nội dung khởi đầu; chưa phải giáo trình chuyên môn hoàn chỉnh được giáo viên thẩm định cho mọi cấp độ.

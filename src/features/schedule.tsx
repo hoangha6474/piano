@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { Card, Empty, PageHeading, SectionTitle } from "@/components/ui";
 import { useLearning, type Plan } from "./store";
-import { library } from "@/music/library";
+import { useSystemLibrary } from "./system-library";
 export function localDate(date = new Date()) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 }
@@ -26,6 +26,10 @@ export function occurs(plan: Plan, date: string) {
   );
 }
 export function Schedule() {
+  const { items: library, refresh: refreshLibrary } = useSystemLibrary();
+  useEffect(() => {
+    void refreshLibrary();
+  }, [refreshLibrary]);
   const query = useSearchParams();
   const requestedDate = query.get("date");
   const initialDate =
@@ -245,7 +249,7 @@ export function Schedule() {
                 name="scoreId"
                 defaultValue={editing?.scoreId || library[0].id}
               >
-                {[...library, ...state.scores].map((s) => (
+                {library.map((s) => (
                   <option key={s.id} value={s.id}>
                     {s.title}
                   </option>

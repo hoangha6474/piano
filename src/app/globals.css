@@ -3130,3 +3130,17 @@ textarea {
     margin-top: 28px;
   }
 }
+
+/* Shared-library administration */
+.admin-library-layout { display: grid; grid-template-columns: minmax(240px, 0.8fr) minmax(0, 2fr); gap: 24px; align-items: start; }
+.admin-editor { display: grid; gap: 24px; min-width: 0; }
+.admin-score-list { display: grid; gap: 8px; margin-top: 18px; }
+.admin-score-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; padding: 14px; text-align: left; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); color: var(--ink); cursor: pointer; }
+.admin-score-row span { display: grid; gap: 6px; overflow-wrap: anywhere; }
+.admin-score-row small { color: var(--muted); }
+.admin-score-row.selected { border-color: var(--olive); background: var(--olive-light); }
+.admin-license { grid-column: 1 / -1; }
+.admin-license textarea { min-height: 85px; width: 100%; }
+.admin-publish-actions { margin-top: 22px; flex-wrap: wrap; }
+.admin-sheet-preview { overflow: auto; max-width: 100%; }
+@media (max-width: 1050px) { .admin-library-layout { grid-template-columns: 1fr; } }

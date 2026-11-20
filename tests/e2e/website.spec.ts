@@ -122,27 +122,74 @@ test("schedule creation persists and completion updates the day", async ({
     page.getByRole("button", { name: "Đã hoàn thành", exact: true }),
   ).toBeVisible();
 });
-test("MusicXML upload validates input and renders a private score", async ({
+test("only system scores can be selected and private uploads are disabled", async ({
   page,
 }) => {
-  await page.goto("/my-scores");
-  const xml =
-    '<?xml version="1.0"?><score-partwise version="4.0"><work><work-title>Bài nhập kiểm thử</work-title></work><part-list><score-part id="P1"><part-name>Piano</part-name></score-part></part-list><part id="P1"><measure number="1"><attributes><divisions>1</divisions><time><beats>4</beats><beat-type>4</beat-type></time><clef><sign>G</sign><line>2</line></clef></attributes><note><pitch><step>C</step><octave>4</octave></pitch><duration>4</duration><type>whole</type></note></measure></part></score-partwise>';
-  await page.locator("input[type=file]").setInputFiles({
-    name: "lesson.musicxml",
-    mimeType: "application/xml",
-    buffer: Buffer.from(xml),
+  await page.addInitScript(() => {
+    localStorage.setItem(
+      "piano-learning-v1",
+      JSON.stringify({
+        version: 2,
+        state: {
+          scores: [
+            {
+              id: "private-test",
+              title: "Bản nhạc riêng kiểm thử",
+              level: "Cá nhân",
+              notes: [],
+            },
+          ],
+        },
+      }),
+    );
   });
+  await page.goto("/my-scores");
+  await expect(page).toHaveURL(/\/library$/);
   await expect(
-    page.getByRole("heading", { name: "Bài nhập kiểm thử" }),
+    page.getByRole("heading", { name: "Tìm giai điệu của hôm nay." }),
   ).toBeVisible();
-  await page
-    .getByRole("link")
-    .filter({ has: page.getByRole("heading", { name: "Bài nhập kiểm thử" }) })
-    .click();
+  await expect(page.locator("input[type=file]")).toHaveCount(0);
+  await expect(
+    page.getByRole("heading", { name: "Bản nhạc riêng kiểm thử" }),
+  ).toHaveCount(0);
+  await expect(
+    page.locator("#sidebar-navigation a[href='/my-scores']"),
+  ).toHaveCount(0);
+  await expect(
+    page
+      .getByRole("combobox", { name: "Lọc cấp độ" })
+      .locator("option", { hasText: "Cá nhân" }),
+  ).toHaveCount(0);
+  await page.getByLabel("Tìm bản nhạc").fill("khong-co-ban-nhac-xyz");
+  await expect(
+    page.getByRole("heading", { name: "Không tìm thấy bản nhạc" }),
+  ).toBeVisible();
+  await page.goto("/practice?score=private-test");
   await expect(page.locator(".osmd svg").first()).toBeVisible({
     timeout: 40000,
   });
+  await expect(
+    page.getByRole("heading", { name: "Bản nhạc riêng kiểm thử" }),
+  ).toHaveCount(0);
+  await page.goto("/schedule");
+  await page
+    .getByRole("button", { name: "Lên lịch luyện", exact: true })
+    .click();
+  await expect(
+    page
+      .getByRole("combobox", { name: "Bản nhạc", exact: true })
+      .locator("option", { hasText: "Bản nhạc riêng kiểm thử" }),
+  ).toHaveCount(0);
+  await page.goto("/settings");
+  await expect(
+    page.getByRole("heading", { name: "Sẵn sàng cho những giai điệu." }),
+  ).toBeVisible();
+  await expect(page.locator("input[type=file]")).toHaveCount(0);
+  expect(
+    (
+      await page.request.post("/api/assets", { data: "private score" })
+    ).status(),
+  ).toBe(403);
 });
 test("private APIs deny anonymous access and untrusted mutation origins", async ({
   request,

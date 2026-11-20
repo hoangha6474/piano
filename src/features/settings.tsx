@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 import { createAuthClient } from "better-auth/react";
 import {
   Usb,
@@ -16,6 +17,7 @@ import { useMidi } from "./use-midi";
 import { useLearning, snapshot } from "./store";
 const client = createAuthClient();
 interface ServiceStatus {
+  admin: boolean;
   auth: boolean;
   storage: boolean;
   ai: boolean;
@@ -32,7 +34,6 @@ export function Settings() {
     [files, setFiles] = useState<
       { id: string; mime: string; bytes: number; createdAt: string }[]
     >([]);
-  const input = useRef<HTMLInputElement>(null);
   const refresh = async () => {
     try {
       const r = await fetch("/api/status"),
@@ -187,6 +188,14 @@ export function Settings() {
                 Đã đăng nhập: <strong>{status.user.name}</strong>
               </p>
               <p className="muted">{status.user.email}</p>
+              <p className="muted">
+                Mã tài khoản: <code>{status.user.id}</code>
+              </p>
+              {status.admin && (
+                <Link className="button primary" href="/admin">
+                  Quản trị thư viện nhạc
+                </Link>
+              )}
               <button
                 className="button secondary"
                 onClick={async () => {
@@ -346,98 +355,61 @@ export function Settings() {
           </span>
         </div>
       </Card>
-      <Card>
-        <h3>
-          <Cloud size={20} />
-          Tệp riêng tư trên R2
-        </h3>
-        <p className="muted">
-          Lưu bản gốc MIDI/MusicXML, tối đa 5 MB. Chỉ tài khoản sở hữu được tải
-          file qua URL ký 60 giây.
-        </p>
-        <button
-          className="button secondary"
-          disabled={!status?.user || !status.storage || busy}
-          onClick={() => input.current?.click()}
-        >
-          <Upload size={16} />
-          Lưu tệp lên R2
-        </button>
-        <input
-          ref={input}
-          className="sr-only"
-          type="file"
-          accept=".mid,.midi,.xml,.musicxml"
-          onChange={async (e) => {
-            const file = e.target.files?.[0];
-            if (!file) return;
-            setBusy(true);
-            try {
-              if (file.size > 5 * 1024 * 1024)
-                throw new Error("Tệp vượt 5 MB.");
-              const r = await fetch("/api/assets", {
-                method: "POST",
-                headers: { "Content-Type": "application/octet-stream" },
-                body: file,
-              });
-              const d = await r.json();
-              if (!r.ok) throw new Error(d.error);
-              setMessage("Đã lưu tệp riêng tư trên R2.");
-              await refresh();
-            } catch (e) {
-              setMessage(
-                e instanceof Error ? e.message : "Không tải tệp được.",
-              );
-            } finally {
-              setBusy(false);
-              if (input.current) input.current.value = "";
-            }
-          }}
-        />
-        {files.map((f) => (
-          <div className="metric-row" key={f.id}>
-            <span>
-              {f.mime.includes("midi") ? "MIDI" : "MusicXML"} ·{" "}
-              {Math.ceil(f.bytes / 1024)} KB ·{" "}
-              {new Date(f.createdAt).toLocaleDateString("vi-VN")}
-            </span>
-            <div className="inline-actions">
-              <button
-                className="icon-button"
-                title="Tải tệp"
-                onClick={async () => {
-                  try {
-                    const r = await fetch(`/api/assets?id=${f.id}`),
-                      d = await r.json();
-                    if (!r.ok) throw new Error(d.error);
-                    window.open(d.url, "_blank", "noopener,noreferrer");
-                  } catch (e) {
-                    setMessage(
-                      e instanceof Error ? e.message : "Không tải được tệp.",
-                    );
-                  }
-                }}
-              >
-                <Download size={16} />
-              </button>
-              <button
-                className="icon-button"
-                title="Xóa tệp"
-                onClick={async () => {
-                  if (!confirm("Xóa vĩnh viễn bản gốc này khỏi R2?")) return;
-                  const r = await fetch(`/api/assets?id=${f.id}`, {
-                    method: "DELETE",
-                  });
-                  if (r.ok) await refresh();
-                  else setMessage("Chưa xóa được tệp.");
-                }}
-              >
-                <Trash2 size={16} />
-              </button>
+      {files.length > 0 && (
+        <Card>
+          <h3>
+            <Cloud size={20} />
+            Tệp đã lưu trước đây
+          </h3>
+          <p className="muted">
+            Bạn có thể tải về hoặc xóa tệp cũ. Luyện tập chỉ sử dụng thư viện hệ
+            thống.
+          </p>
+          {files.map((f) => (
+            <div className="metric-row" key={f.id}>
+              <span>
+                {f.mime.includes("midi") ? "MIDI" : "MusicXML"} ·{" "}
+                {Math.ceil(f.bytes / 1024)} KB ·{" "}
+                {new Date(f.createdAt).toLocaleDateString("vi-VN")}
+              </span>
+              <div className="inline-actions">
+                <button
+                  className="icon-button"
+                  title="Tải tệp"
+                  onClick={async () => {
+                    try {
+                      const r = await fetch(`/api/assets?id=${f.id}`),
+                        d = await r.json();
+                      if (!r.ok) throw new Error(d.error);
+                      window.open(d.url, "_blank", "noopener,noreferrer");
+                    } catch (e) {
+                      setMessage(
+                        e instanceof Error ? e.message : "Không tải được tệp.",
+                      );
+                    }
+                  }}
+                >
+                  <Download size={16} />
+                </button>
+                <button
+                  className="icon-button"
+                  title="Xóa tệp"
+                  onClick={async () => {
+                    if (!confirm("Xóa vĩnh viễn bản gốc này khỏi R2?")) return;
+                    const r = await fetch(`/api/assets?id=${f.id}`, {
+                      method: "DELETE",
+                    });
+                    if (r.ok) await refresh();
+                    else setMessage("Chưa xóa được tệp.");
+                  }}
+                >
+                  <Trash2 size={16} />
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
-      </Card>
+          ))}
+        </Card>
+      )}
     </>
   );
 }

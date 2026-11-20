@@ -62,7 +62,6 @@ interface State extends Data {
   complete: (id: string) => void;
   resume: (id: string) => void;
   addResult: (r: SessionResult) => void;
-  addScore: (s: Score) => void;
   removeScore: (id: string) => void;
   addAnnotation: (a: Annotation) => void;
   removeAnnotation: (id: string) => void;
@@ -104,10 +103,6 @@ export const useLearning = create<State>()(
       resume: (id) => set({ lastLesson: id }),
       addResult: (r) =>
         set((s) => ({ results: [r, ...s.results].slice(0, 2000) })),
-      addScore: (score) =>
-        set((s) => ({
-          scores: [...s.scores.filter((x) => x.id !== score.id), score],
-        })),
       removeScore: (id) =>
         set((s) => ({
           scores: s.scores.filter((x) => x.id !== id),

@@ -27,27 +27,6 @@ const schema = z.object({
           .passthrough(),
       )
       .max(2000),
-    scores: z
-      .array(
-        z
-          .object({
-            id: string,
-            title: string,
-            notes: z
-              .array(
-                z
-                  .object({
-                    midi: z.number().min(0).max(127),
-                    beat: z.number().nonnegative(),
-                    duration: z.number().positive(),
-                  })
-                  .passthrough(),
-              )
-              .max(20000),
-          })
-          .passthrough(),
-      )
-      .max(100),
     annotations: z
       .array(
         z
@@ -109,7 +88,7 @@ export async function PUT(request: Request) {
     raw = new TextDecoder().decode(await readLimited(request, 2 * 1024 * 1024));
   } catch {
     return Response.json(
-      { error: "Dữ liệu đồng bộ vượt 2 MB. Dùng R2 cho bản nhạc lớn." },
+      { error: "Dữ liệu đồng bộ vượt giới hạn 2 MB." },
       { status: 413 },
     );
   }
@@ -128,14 +107,15 @@ export async function PUT(request: Request) {
   if (revision === 0)
     rows = await db
       .insert(workspaces)
-      .values({ userId: user.id, data, revision: 1 })
+      .values({ userId: user.id, data: { ...data, scores: [] }, revision: 1 })
       .onConflictDoNothing()
       .returning({ revision: workspaces.revision });
   else
     rows = await db
       .update(workspaces)
       .set({
-        data,
+        // Keep archived scores unchanged; sync cannot add private scores.
+        data: sql`${JSON.stringify(data)}::jsonb || jsonb_build_object('scores', COALESCE(${workspaces.data}->'scores', '[]'::jsonb))`,
         revision: sql`${workspaces.revision}+1`,
         updatedAt: new Date(),
       })

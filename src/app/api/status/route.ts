@@ -1,8 +1,11 @@
+import { isAdminId } from "@/server/admin-policy";
 import { authReady, currentUser } from "@/server/auth";
 export const dynamic = "force-dynamic";
 export async function GET() {
   try {
+    const user = await currentUser();
     return Response.json({
+      admin: isAdminId(user?.id),
       auth: authReady(),
       storage: !!(
         process.env.R2_ACCOUNT_ID &&
@@ -15,11 +18,12 @@ export async function GET() {
         ((process.env.AI_PROVIDER === "openai" && process.env.OPENAI_API_KEY) ||
           (process.env.AI_PROVIDER === "gemini" && process.env.GEMINI_API_KEY))
       ),
-      user: await currentUser(),
+      user,
     });
   } catch {
     return Response.json(
       {
+        admin: false,
         auth: false,
         storage: false,
         ai: false,

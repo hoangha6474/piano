@@ -1,13 +1,13 @@
 import { Suspense } from "react";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { Workspace } from "@/components/workspace";
 const sections = [
+  "admin",
   "assessment",
   "curriculum",
   "lessons",
   "practice",
   "library",
-  "my-scores",
   "technique",
   "progress",
   "schedule",
@@ -23,6 +23,7 @@ export default async function Section({
   params: Promise<{ section: string }>;
 }) {
   const { section } = await params;
+  if (section === "my-scores") redirect("/library");
   if (!sections.includes(section)) notFound();
   return (
     <Suspense

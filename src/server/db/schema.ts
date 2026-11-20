@@ -13,6 +13,7 @@ import {
   check,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
+import type { Score } from "../../music/model";
 const id = () => uuid("id").defaultRandom().primaryKey();
 const created = () =>
   timestamp("created_at", { withTimezone: true }).defaultNow().notNull();
@@ -39,7 +40,9 @@ export const session = pgTable(
     token: text("token").notNull().unique(),
     expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
     createdAt: created(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
     ipAddress: text("ip_address"),
     userAgent: text("user_agent"),
   },
@@ -64,7 +67,9 @@ export const account = pgTable(
     scope: text("scope"),
     password: text("password"),
     createdAt: created(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
   },
   (t) => [
     index("account_owner_idx").on(t.userId),
@@ -79,7 +84,9 @@ export const verification = pgTable(
     value: text("value").notNull(),
     expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
     createdAt: created(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
   },
   (t) => [index("verification_identifier_idx").on(t.identifier)],
 );
@@ -455,8 +462,46 @@ export const workspaces = pgTable("learning_workspaces", {
   userId: owner().primaryKey(),
   revision: integer("revision").default(1).notNull(),
   data: jsonb("data").notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  createdAt: created(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
 });
+// Admin drafts and their last published snapshot are separate: editing a draft
+// never changes what learners see until an explicit publish action succeeds.
+export const libraryScores = pgTable(
+  "library_scores",
+  {
+    id: id(),
+    score: jsonb("score").$type<Score>().notNull(),
+    publishedScore: jsonb("published_score").$type<Score>(),
+    objectKey: text("object_key").notNull().unique(),
+    status: text("status")
+      .$type<"draft" | "published" | "hidden">()
+      .notNull()
+      .default("draft"),
+    revision: integer("revision").notNull().default(1),
+    publishedRevision: integer("published_revision"),
+    createdBy: text("created_by")
+      .notNull()
+      .references(() => user.id),
+    updatedBy: text("updated_by")
+      .notNull()
+      .references(() => user.id),
+    createdAt: created(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (t) => [
+    index("library_scores_status_idx").on(t.status),
+    check(
+      "library_scores_status_check",
+      sql`${t.status} in ('draft', 'published', 'hidden')`,
+    ),
+    check("library_scores_revision_check", sql`${t.revision} > 0`),
+  ],
+);
 export const aiUsage = pgTable(
   "ai_usage",
   {

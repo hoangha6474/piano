@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { SystemLibraryProvider } from "@/features/system-library";
 export const metadata: Metadata = {
   icons: { icon: "/icon.svg" },
   title: "Piano Learning — Học theo nhịp của bạn",
@@ -13,7 +14,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="vi">
-      <body>{children}</body>
+      <body>
+        <SystemLibraryProvider>{children}</SystemLibraryProvider>
+      </body>
     </html>
   );
 }

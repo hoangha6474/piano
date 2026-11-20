@@ -1,18 +1,11 @@
-import {
-  PutObjectCommand,
-  GetObjectCommand,
-  DeleteObjectCommand,
-} from "@aws-sdk/client-s3";
+import { GetObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { createHash, randomUUID } from "node:crypto";
-import { XMLValidator } from "fast-xml-parser";
-import { Midi } from "@tonejs/midi";
 import { and, eq, desc } from "drizzle-orm";
 import { currentUser } from "@/server/auth";
 import { getDb } from "@/server/db";
 import { assets } from "@/server/db/schema";
 import { getStorage, storageReady } from "@/server/storage";
-import { readLimited, sameOrigin, unavailable } from "@/server/http";
+import { sameOrigin, unavailable } from "@/server/http";
 export const runtime = "nodejs";
 export async function GET(request: Request) {
   const user = await currentUser();
@@ -52,82 +45,14 @@ export async function GET(request: Request) {
   );
   return Response.json({ url }, { headers: { "Cache-Control": "no-store" } });
 }
-export async function POST(request: Request) {
-  if (!sameOrigin(request))
-    return Response.json(
-      { error: "Nguồn yêu cầu không hợp lệ." },
-      { status: 403 },
-    );
-  const user = await currentUser();
-  if (!user) return Response.json({ error: "Cần đăng nhập." }, { status: 401 });
-  if (!storageReady()) return unavailable("Chưa cấu hình Cloudflare R2.");
-  let bytes: Uint8Array;
-  try {
-    bytes = await readLimited(request, 5 * 1024 * 1024);
-  } catch {
-    return Response.json({ error: "Tệp vượt 5 MB." }, { status: 413 });
-  }
-  if (!bytes.length)
-    return Response.json({ error: "Tệp rỗng." }, { status: 400 });
-  let mime: string, extension: string;
-  try {
-    if (String.fromCharCode(...bytes.slice(0, 4)) === "MThd") {
-      const midi = new Midi(bytes);
-      if (
-        !midi.tracks.some((t) => t.notes.length) ||
-        midi.tracks.reduce((s, t) => s + t.notes.length, 0) > 20000
-      )
-        throw new Error();
-      mime = "audio/midi";
-      extension = "mid";
-    } else {
-      const xml = new TextDecoder("utf-8", { fatal: true }).decode(bytes);
-      if (
-        /<!DOCTYPE|<!ENTITY/i.test(xml) ||
-        !/<score-partwise[\s>]/.test(xml) ||
-        XMLValidator.validate(xml) !== true ||
-        (xml.match(/<note[\s>]/g) || []).length > 20000
-      )
-        throw new Error();
-      mime = "application/vnd.recordare.musicxml+xml";
-      extension = "musicxml";
-    }
-  } catch {
-    return Response.json(
-      { error: "MIDI hoặc MusicXML không hợp lệ. DTD/entity không được phép." },
-      { status: 400 },
-    );
-  }
-  const key = `private/${user.id}/${randomUUID()}.${extension}`,
-    storage = getStorage();
-  try {
-    await storage.send(
-      new PutObjectCommand({
-        Bucket: process.env.R2_BUCKET,
-        Key: key,
-        Body: bytes,
-        ContentType: mime,
-      }),
-    );
-    const [asset] = await getDb()
-      .insert(assets)
-      .values({
-        userId: user.id,
-        objectKey: key,
-        mime,
-        bytes: bytes.length,
-        sha256: createHash("sha256").update(bytes).digest("hex"),
-      })
-      .returning({ id: assets.id });
-    return Response.json(asset, { status: 201 });
-  } catch {
-    await storage
-      .send(
-        new DeleteObjectCommand({ Bucket: process.env.R2_BUCKET, Key: key }),
-      )
-      .catch(() => {});
-    return unavailable("Không lưu được tệp. Vui lòng thử lại.");
-  }
+export async function POST() {
+  return Response.json(
+    {
+      error:
+        "Không hỗ trợ tải bản nhạc riêng. Vui lòng sử dụng thư viện hệ thống.",
+    },
+    { status: 403 },
+  );
 }
 export async function DELETE(request: Request) {
   if (!sameOrigin(request))

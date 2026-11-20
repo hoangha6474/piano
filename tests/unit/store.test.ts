@@ -15,6 +15,7 @@ vi.mock("../../src/features/storage", () => ({
 const legacy = {
   ...emptyData,
   completed: ["notes"],
+  scores: [{ id: "archived", title: "Archived private score" }],
   ear: [{ at: "2026-01-01T00:00:00Z", correct: true, skill: "pitch" }],
   goals: [
     { id: "removed", kind: "skill", title: "Old goal", target: 5 },
@@ -28,6 +29,8 @@ describe("saved learning data", () => {
     expect(data).not.toHaveProperty("ear");
     expect(data.goals.map((g) => g.id)).toEqual(["kept"]);
     expect(data.completed).toEqual(["notes"]);
+    expect(data.scores).toEqual(legacy.scores);
+    expect(useLearning.getState()).not.toHaveProperty("addScore");
     expect(legacy.goals).toHaveLength(2);
   });
 
