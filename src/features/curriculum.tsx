@@ -1,25 +1,18 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import {
-  ArrowRight,
-  Check,
-  Clock3,
-  BookOpen,
-  ChevronRight,
-} from "lucide-react";
+import { ArrowRight, Check, Clock3, BookOpen } from "lucide-react";
 import { lessons, levels } from "@/music/library";
 import { useLearning } from "./store";
 import { Card, PageHeading } from "@/components/ui";
 export function Curriculum() {
-  const [level, setLevel] = useState("Beginner"),
-    state = useLearning();
+  const [level, setLevel] = useState("Beginner");
   return (
     <>
       <PageHeading
         eyebrow="GIÁO TRÌNH PIANO"
         title="Một hành trình, nhiều khám phá."
-        description="Từ những nốt đầu tiên đến sự tự tin trên phím đàn. Bạn luôn có thể quay lại bất kỳ bài nào."
+        description="Chọn cấp độ để xem nội dung giáo trình piano."
       />
       <div className="level-tabs">
         {levels.map((l, i) => (
@@ -34,54 +27,15 @@ export function Curriculum() {
         ))}
       </div>
       <div className="curriculum-layout">
-        <div>
-          {lessons
-            .filter((l) => l.level === level)
-            .map((l, i) => (
-              <Link
-                className="lesson-row card"
-                href={`/lessons?id=${l.id}`}
-                key={l.id}
-              >
-                <span
-                  className={`lesson-number ${state.completed.includes(l.id) ? "done" : ""}`}
-                >
-                  {state.completed.includes(l.id) ? (
-                    <Check size={19} />
-                  ) : (
-                    String(i + 1).padStart(2, "0")
-                  )}
-                </span>
-                <div>
-                  <span className="eyebrow">{l.chapter}</span>
-                  <h3>{l.title}</h3>
-                  <p>{l.description}</p>
-                  <small>
-                    <Clock3 size={13} />
-                    {l.minutes} phút · Lý thuyết + thực hành
-                  </small>
-                </div>
-                <ChevronRight size={22} />
-              </Link>
-            ))}
-        </div>
+        <Card>
+          <span className="eyebrow">{level}</span>
+          <h3>Chưa có bài tập</h3>
+          <p>Hiện chưa có bài tập trong giáo trình ở cấp độ này.</p>
+        </Card>
         <Card className="curriculum-aside">
           <BookOpen size={25} />
           <h3>Đi theo nhịp của riêng bạn</h3>
-          <p>
-            Không khóa bài học. Học lại bất kỳ lúc nào và dùng dữ liệu MIDI để
-            biết phần cần luyện thêm.
-          </p>
-          <div className="progress-track">
-            <i
-              style={{
-                width: `${(state.completed.length / lessons.length) * 100}%`,
-              }}
-            />
-          </div>
-          <small>
-            {state.completed.length}/{lessons.length} bài đã hoàn thành
-          </small>
+          <p>Chọn cấp độ phù hợp và luyện tập theo nhịp độ của bạn.</p>
           <hr />
           <Link className="text-button" href="/assessment">
             Thử bài kiểm tra đầu vào
